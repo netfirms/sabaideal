@@ -43,6 +43,28 @@ This repository is pre-configured for running tests of your Spree customizations
 bundle exec rspec
 ```
 
+## Git Hooks
+
+This repository includes Git hooks to help maintain code quality. The pre-commit hook runs RuboCop and Brakeman before each commit to ensure code quality and security.
+
+### Installing Git Hooks
+
+To install the Git hooks, run:
+
+```bash
+./install-hooks.sh
+```
+
+This will copy the hooks to your local `.git/hooks` directory and make them executable.
+
+### What the Pre-commit Hook Does
+
+The pre-commit hook:
+- Runs RuboCop on staged Ruby files to check for style issues
+- Runs Brakeman to check for security vulnerabilities
+
+If any of these checks fail, the commit will be aborted, allowing you to fix the issues before committing.
+
 ## Spree 5 Announcement & Demo
 
 [![Spree Commerce 5 version](https://vendo-production-res.cloudinary.com/image/upload/w_2000/q_auto/v1742985405/docs/github/Spree_Commerce_open-source_eCommerce_myzurl.jpg)](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/)

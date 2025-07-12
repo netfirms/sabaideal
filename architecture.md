@@ -6,7 +6,7 @@
 
 ### System Overview
 
-SabaiDeal is evolving from a standard e-commerce application into a comprehensive multi-vendor marketplace specializing in property listings (for rent and sale) and service listings. Built on Ruby on Rails 8.0 with the Spree Commerce platform (v5.1), the application follows a standard Rails MVC (Model-View-Controller) architecture with additional components for background processing, caching, and third-party integrations.
+SabaiDeal is evolving from a standard e-commerce application into a comprehensive multi-vendor marketplace specializing in property listings (for rent and sale) and service listings. Built on Ruby on Rails 8.0 with the Spree Commerce platform (v5.1), the application follows a standard Rails MVC (Model-View-Controller) architecture with additional components for background processing, caching, and third-party integrations. The platform leverages the Komplex module, a modular multi-vendor marketplace extension for SpreeCommerce, to enable the creation and management of various listing types including properties, restaurants, services, promotions, and advertisements.
 
 **Core Platform Goals:**
 - Enable property owners and real estate agents to list properties for rent or sale
@@ -31,6 +31,14 @@ SabaiDeal is evolving from a standard e-commerce application into a comprehensiv
 │  Filtering  │  Messaging  │  Processing     │  Communication       │
 │             │             │                 │                      │
 ├─────────────┴─────────────┴─────────────────┴──────────────────────┤
+│                                                                     │
+│                         Komplex Module                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│  │ Vendor       │  │ Listing      │  │ Promotion &  │              │
+│  │ Management   │  │ Management   │  │ Advertisement │              │
+│  └──────────────┘  └──────────────┘  └──────────────┘              │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │                      Third-Party Integrations                       │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
@@ -1388,3 +1396,76 @@ export default class extends Controller {
 ```
 
 This architecture provides a comprehensive plan for extending a Spree Commerce application to support a multi-vendor marketplace for property and service listings. The design leverages Spree's existing e-commerce capabilities while adding custom models and functionality specific to property and service listings.
+
+## Komplex Module Integration
+
+### Overview
+
+SabaiDeal integrates the Komplex module, a modular multi-vendor marketplace extension for SpreeCommerce that enables the creation and management of various listing types including properties, restaurants, services, promotions, and advertisements. Built as a Rails Engine and Spree extension, Komplex follows the standard Rails MVC architecture while integrating seamlessly with the Spree Commerce platform.
+
+### Core Module Goals
+
+- Enable vendors to register and manage their marketplace presence
+- Support multiple listing types (properties, restaurants, services, etc.)
+- Provide robust search and filtering capabilities
+- Implement commission and payout logic for marketplace transactions
+- Support approval workflows for listings and vendors
+- Enable platform-wide and vendor-specific promotions and advertisements
+
+### Component Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Komplex Marketplace                           │
+├─────────────┬─────────────┬─────────────────┬──────────────────────┤
+│             │             │                 │                      │
+│  Vendor     │  Listing    │    Promotion    │  Advertisement       │
+│  Management │  Management │    Management   │  Management          │
+│             │             │                 │                      │
+├─────────────┼─────────────┼─────────────────┼──────────────────────┤
+│             │             │                 │                      │
+│  Property   │  Restaurant │  Service        │  Commission &        │
+│  Listings   │  Listings   │  Listings       │  Payout              │
+│             │             │                 │                      │
+├─────────────┴─────────────┴─────────────────┴──────────────────────┤
+│                                                                     │
+│                      Spree Commerce Integration                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│  │ User &       │  │ Product &    │  │ Order &      │              │
+│  │ Store        │  │ Variant      │  │ Payment      │              │
+│  └──────────────┘  └──────────────┘  └──────────────┘              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+1. **Multi-vendor marketplace** - Allow vendors to register and manage their marketplace presence
+2. **Multiple listing types** - Support for property listings, restaurant listings, service listings, and more
+3. **Promotions** - Vendor-level and platform-wide promotions
+4. **Advertisements** - Paid vendor ads and campaign placements
+5. **Commission system** - Configurable commission rates and automated payouts
+6. **Approval workflows** - For vendors, listings, and reviews
+7. **Vendor dashboards** - Analytics and management tools for vendors
+
+### Integration with SabaiDeal
+
+Komplex integrates with the SabaiDeal platform by:
+
+1. **Extending Core Models**
+   - Extending `Spree::User` to support vendor capabilities
+   - Leveraging `Spree::Product` for listing representation
+   - Using `Spree::Order` for marketplace transactions
+   - Extending `Spree::Store` for multi-vendor support
+
+2. **Admin Interface Integration**
+   - Adding vendor management to Spree Admin
+   - Integrating listing approval workflows
+   - Adding commission and payout management
+
+3. **Storefront Integration**
+   - Enhancing product pages to display listing details
+   - Adding vendor profile pages
+   - Implementing search and filtering for listings
+
+For more detailed information about the Komplex module, refer to the [Komplex Architecture Documentation](komplex_architecture.md).

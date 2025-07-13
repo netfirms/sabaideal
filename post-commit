@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Running post-commit actions..."
+
+# Get the commit hash
+COMMIT_HASH=$(git rev-parse HEAD)
+echo "Commit hash: $COMMIT_HASH"
+
+# Get the commit message
+COMMIT_MSG=$(git log -1 --pretty=%B)
+echo "Commit message: $COMMIT_MSG"
+
+# Add any post-commit actions here
+# For example:
+# - Notify team members
+# - Trigger CI/CD pipelines
+# - Update documentation
+# - etc.
+
+echo "Post-commit actions completed successfully!"

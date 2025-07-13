@@ -1,0 +1,142 @@
+<div class="vendor-edit">
+  <div class="edit-header">
+    <h1>Edit Vendor Profile</h1>
+    <p>Update your business information and settings.</p>
+  </div>
+  
+  <%= form_with model: @vendor, url: vendor_path(@vendor), method: :patch, local: true, class: 'vendor-form', html: { multipart: true } do |f| %>
+    <% if @vendor.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@vendor.errors.count, "error") %> prohibited this vendor from being saved:</h4>
+        <ul>
+          <% @vendor.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <div class="form-section">
+      <h3>Business Information</h3>
+      
+      <div class="form-group">
+        <%= f.label :name, "Business Name" %>
+        <%= f.text_field :name, class: 'form-control', required: true %>
+        <small class="form-text text-muted">Enter the official name of your business as it should appear on the marketplace.</small>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :description, "Business Description" %>
+        <%= f.text_area :description, rows: 5, class: 'form-control', required: true %>
+        <small class="form-text text-muted">Provide a detailed description of your business, including the types of properties, restaurants, or services you offer.</small>
+      </div>
+      
+      <% if @vendor.logo.attached? %>
+        <div class="form-group">
+          <label>Current Logo</label>
+          <div class="current-logo">
+            <%= image_tag @vendor.logo, class: 'img-thumbnail', style: 'max-width: 150px; max-height: 150px;' %>
+          </div>
+        </div>
+      <% end %>
+      
+      <div class="form-group">
+        <%= f.label :logo, "Update Logo" %>
+        <%= f.file_field :logo, class: 'form-control-file' %>
+        <small class="form-text text-muted">Upload a new logo for your business. Recommended size: 400x400 pixels.</small>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Contact Information</h3>
+      
+      <div class="form-group">
+        <%= f.label :contact_name, "Contact Person" %>
+        <%= f.text_field :contact_name, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :contact_email, "Contact Email" %>
+        <%= f.email_field :contact_email, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :contact_phone, "Contact Phone" %>
+        <%= f.telephone_field :contact_phone, class: 'form-control', required: true %>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Business Address</h3>
+      
+      <div class="form-group">
+        <%= f.label :address, "Street Address" %>
+        <%= f.text_field :address, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <%= f.label :city %>
+          <%= f.text_field :city, class: 'form-control', required: true %>
+        </div>
+        
+        <div class="form-group col-md-3">
+          <%= f.label :state %>
+          <%= f.text_field :state, class: 'form-control', required: true %>
+        </div>
+        
+        <div class="form-group col-md-3">
+          <%= f.label :postal_code %>
+          <%= f.text_field :postal_code, class: 'form-control', required: true %>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :country %>
+        <%= f.text_field :country, class: 'form-control', required: true %>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Business Type</h3>
+      
+      <div class="form-group">
+        <%= f.label :business_type, "What type of listings will you primarily offer?" %>
+        <div class="business-type-options">
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'property', @vendor.business_type == 'property', class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_property">
+              <i class="icon-property"></i> Properties (Real Estate)
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'restaurant', @vendor.business_type == 'restaurant', class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_restaurant">
+              <i class="icon-restaurant"></i> Restaurants
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'service', @vendor.business_type == 'service', class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_service">
+              <i class="icon-service"></i> Services
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'multiple', @vendor.business_type == 'multiple', class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_multiple">
+              <i class="icon-multiple"></i> Multiple Types
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <%= f.submit "Update Profile", class: "btn btn-primary" %>
+      <%= link_to "Cancel", vendor_dashboard_path, class: "btn btn-link" %>
+    </div>
+  <% end %>
+</div>

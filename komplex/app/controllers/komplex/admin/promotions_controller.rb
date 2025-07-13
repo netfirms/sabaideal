@@ -2,16 +2,16 @@
 
 module Komplex
   module Admin
-    class PromotionsController < Spree::Admin::ResourceController
+    class PromotionsController < Komplex::Admin::BaseController
       before_action :load_data, except: [:index, :destroy]
 
       def index
         @promotions = Komplex::Promotion.all
-        
+
         # Apply filters
         @promotions = @promotions.by_vendor(params[:vendor_id]) if params[:vendor_id].present?
         @promotions = @promotions.platform_wide if params[:platform_wide] == 'true'
-        
+
         # Apply date filters
         if params[:active] == 'true'
           @promotions = @promotions.active
@@ -20,7 +20,7 @@ module Komplex
         elsif params[:upcoming] == 'true'
           @promotions = @promotions.upcoming
         end
-        
+
         # Apply sorting
         case params[:sort]
         when 'newest'
@@ -34,8 +34,8 @@ module Komplex
         else
           @promotions = @promotions.order(created_at: :desc)
         end
-        
-        @promotions = @promotions.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+
+        @promotions = @promotions.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def new
@@ -46,7 +46,7 @@ module Komplex
 
       def create
         @promotion = Komplex::Promotion.new(promotion_params)
-        
+
         if @promotion.save
           flash[:success] = t('komplex.admin.promotions.create.success')
           redirect_to admin_promotions_path
@@ -63,7 +63,7 @@ module Komplex
 
       def update
         @promotion = Komplex::Promotion.find(params[:id])
-        
+
         if @promotion.update(promotion_params)
           flash[:success] = t('komplex.admin.promotions.update.success')
           redirect_to admin_promotions_path
@@ -76,13 +76,13 @@ module Komplex
 
       def destroy
         @promotion = Komplex::Promotion.find(params[:id])
-        
+
         if @promotion.destroy
           flash[:success] = t('komplex.admin.promotions.destroy.success')
         else
           flash[:error] = t('komplex.admin.promotions.destroy.error')
         end
-        
+
         redirect_to admin_promotions_path
       end
 

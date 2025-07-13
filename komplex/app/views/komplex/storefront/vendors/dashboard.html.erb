@@ -1,0 +1,268 @@
+<div class="vendor-dashboard">
+  <div class="dashboard-header">
+    <h1>Vendor Dashboard</h1>
+    <p>Welcome back, <%= @vendor.name %>!</p>
+  </div>
+  
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-value"><%= @listings.count %></div>
+      <div class="stat-label">Total Listings</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-value"><%= @published_listings %></div>
+      <div class="stat-label">Published Listings</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-value"><%= @pending_listings %></div>
+      <div class="stat-label">Pending Approval</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-value"><%= number_to_currency(@total_sales) %></div>
+      <div class="stat-label">Total Sales</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-value"><%= number_to_currency(@pending_payout) %></div>
+      <div class="stat-label">Pending Payout</div>
+    </div>
+  </div>
+  
+  <div class="dashboard-actions">
+    <div class="action-buttons">
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="createListingDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Create New Listing
+        </button>
+        <div class="dropdown-menu" aria-labelledby="createListingDropdown">
+          <%= link_to "Property Listing", new_listing_path(type: 'Property'), class: "dropdown-item" %>
+          <%= link_to "Restaurant Listing", new_listing_path(type: 'Restaurant'), class: "dropdown-item" %>
+          <%= link_to "Service Listing", new_listing_path(type: 'Service'), class: "dropdown-item" %>
+        </div>
+      </div>
+      
+      <%= link_to "Edit Profile", edit_vendor_path(@vendor), class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
+  
+  <div class="dashboard-content">
+    <div class="dashboard-tabs">
+      <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="listings-tab" data-toggle="tab" href="#listings" role="tab" aria-controls="listings" aria-selected="true">My Listings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="bookings-tab" data-toggle="tab" href="#bookings" role="tab" aria-controls="bookings" aria-selected="false">Bookings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">Messages</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="payouts-tab" data-toggle="tab" href="#payouts" role="tab" aria-controls="payouts" aria-selected="false">Payouts</a>
+        </li>
+      </ul>
+      
+      <div class="tab-content" id="dashboardTabsContent">
+        <div class="tab-pane fade show active" id="listings" role="tabpanel" aria-labelledby="listings-tab">
+          <div class="listings-filter">
+            <div class="filter-options">
+              <label>Filter by Status:</label>
+              <%= link_to "All", vendor_dashboard_path, class: params[:status].blank? ? 'active' : '' %>
+              <%= link_to "Draft", vendor_dashboard_path(status: 'draft'), class: params[:status] == 'draft' ? 'active' : '' %>
+              <%= link_to "Pending", vendor_dashboard_path(status: 'pending'), class: params[:status] == 'pending' ? 'active' : '' %>
+              <%= link_to "Published", vendor_dashboard_path(status: 'published'), class: params[:status] == 'published' ? 'active' : '' %>
+              <%= link_to "Rejected", vendor_dashboard_path(status: 'rejected'), class: params[:status] == 'rejected' ? 'active' : '' %>
+            </div>
+            
+            <div class="filter-options">
+              <label>Filter by Type:</label>
+              <%= link_to "All", vendor_dashboard_path(status: params[:status]), class: params[:type].blank? ? 'active' : '' %>
+              <%= link_to "Properties", vendor_dashboard_path(status: params[:status], type: 'Property'), class: params[:type] == 'Property' ? 'active' : '' %>
+              <%= link_to "Restaurants", vendor_dashboard_path(status: params[:status], type: 'Restaurant'), class: params[:type] == 'Restaurant' ? 'active' : '' %>
+              <%= link_to "Services", vendor_dashboard_path(status: params[:status], type: 'Service'), class: params[:type] == 'Service' ? 'active' : '' %>
+            </div>
+          </div>
+          
+          <div class="listings-table">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @listings.each do |listing| %>
+                  <tr>
+                    <td><%= link_to listing.title, listing_path(listing) %></td>
+                    <td><%= listing.listable_type.demodulize %></td>
+                    <td><%= number_to_currency(listing.price) %></td>
+                    <td><span class="status-badge status-<%= listing.status %>"><%= listing.status.titleize %></span></td>
+                    <td><%= listing.created_at.strftime("%b %d, %Y") %></td>
+                    <td class="actions">
+                      <%= link_to "View", listing_path(listing), class: "btn btn-sm btn-outline-primary" %>
+                      <%= link_to "Edit", edit_listing_path(listing), class: "btn btn-sm btn-outline-secondary" %>
+                      <% if listing.draft? %>
+                        <%= link_to "Submit", submit_for_approval_listing_path(listing), method: :post, class: "btn btn-sm btn-outline-success" %>
+                      <% end %>
+                      <%= link_to "Delete", listing_path(listing), method: :delete, data: { confirm: "Are you sure you want to delete this listing?" }, class: "btn btn-sm btn-outline-danger" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          
+          <% if @listings.empty? %>
+            <div class="no-listings">
+              <p>No listings found matching your criteria.</p>
+            </div>
+          <% end %>
+          
+          <div class="pagination">
+            <%= paginate @listings %>
+          </div>
+        </div>
+        
+        <div class="tab-pane fade" id="bookings" role="tabpanel" aria-labelledby="bookings-tab">
+          <% if @vendor.bookings.any? %>
+            <div class="bookings-table">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Listing</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @vendor.bookings.order(created_at: :desc).limit(10).each do |booking| %>
+                    <tr>
+                      <td><%= link_to booking.listing.title, listing_path(booking.listing) %></td>
+                      <td><%= booking.user.full_name %></td>
+                      <td><%= booking.start_date.strftime("%b %d, %Y") %></td>
+                      <td><span class="status-badge status-<%= booking.status %>"><%= booking.status.titleize %></span></td>
+                      <td><%= number_to_currency(booking.price) %></td>
+                      <td class="actions">
+                        <%= link_to "View", "#", class: "btn btn-sm btn-outline-primary" %>
+                        <% if booking.pending? %>
+                          <%= link_to "Accept", "#", class: "btn btn-sm btn-outline-success" %>
+                          <%= link_to "Decline", "#", class: "btn btn-sm btn-outline-danger" %>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="no-bookings">
+              <p>No bookings found.</p>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="tab-pane fade" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+          <% if @vendor.messages.any? %>
+            <div class="messages-list">
+              <% @vendor.messages.order(created_at: :desc).limit(10).each do |message| %>
+                <div class="message-item">
+                  <div class="message-header">
+                    <div class="message-meta">
+                      <span class="message-sender"><%= message.sender.full_name %></span>
+                      <span class="message-date"><%= message.created_at.strftime("%b %d, %Y %H:%M") %></span>
+                    </div>
+                    <div class="message-status">
+                      <% if message.read? %>
+                        <span class="badge badge-secondary">Read</span>
+                      <% else %>
+                        <span class="badge badge-primary">New</span>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="message-content">
+                    <%= simple_format message.content %>
+                  </div>
+                  <div class="message-actions">
+                    <%= link_to "Reply", "#", class: "btn btn-sm btn-outline-primary" %>
+                    <% unless message.read? %>
+                      <%= link_to "Mark as Read", "#", class: "btn btn-sm btn-outline-secondary" %>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="no-messages">
+              <p>No messages found.</p>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="tab-pane fade" id="payouts" role="tabpanel" aria-labelledby="payouts-tab">
+          <div class="payout-summary">
+            <div class="summary-card">
+              <div class="summary-title">Available for Payout</div>
+              <div class="summary-value"><%= number_to_currency(@pending_payout) %></div>
+              <% if @pending_payout > 0 %>
+                <%= link_to "Request Payout", "#", class: "btn btn-primary" %>
+              <% end %>
+            </div>
+          </div>
+          
+          <h3>Payout History</h3>
+          <% if @vendor.payouts.any? %>
+            <div class="payouts-table">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Reference</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @vendor.payouts.order(created_at: :desc).each do |payout| %>
+                    <tr>
+                      <td><%= payout.created_at.strftime("%b %d, %Y") %></td>
+                      <td><%= number_to_currency(payout.amount) %></td>
+                      <td><span class="status-badge status-<%= payout.status %>"><%= payout.status.titleize %></span></td>
+                      <td><%= payout.reference %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="no-payouts">
+              <p>No payout history found.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Bootstrap tabs
+      $('#dashboardTabs a').on('click', function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+      });
+    });
+  </script>
+<% end %>

@@ -1,0 +1,260 @@
+<div class="listing-form-container">
+  <h1>Create New <%= @listing_type %> Listing</h1>
+  
+  <%= form_with model: @listing, url: listings_path, local: true, class: 'listing-form', html: { multipart: true } do |f| %>
+    <% if @listing.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@listing.errors.count, "error") %> prohibited this listing from being saved:</h4>
+        <ul>
+          <% @listing.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <%= f.hidden_field :listable_type, value: "Komplex::#{@listing_type}" %>
+    
+    <div class="form-section">
+      <h3>Basic Information</h3>
+      
+      <div class="form-group">
+        <%= f.label :title %>
+        <%= f.text_field :title, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :description %>
+        <%= f.text_area :description, rows: 5, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :price %>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= f.number_field :price, step: 0.01, min: 0, class: 'form-control', required: true %>
+        </div>
+        <small class="form-text text-muted">
+          <% if @listing_type == 'Property' %>
+            For rental properties, enter the monthly rent. For properties for sale, enter the sale price.
+          <% elsif @listing_type == 'Service' %>
+            Enter the price based on your pricing model (hourly rate or fixed price).
+          <% else %>
+            Enter the base price for your listing.
+          <% end %>
+        </small>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :images, "Upload Images" %>
+        <%= f.file_field :images, multiple: true, class: 'form-control-file' %>
+        <small class="form-text text-muted">You can select multiple images. The first image will be used as the main image.</small>
+      </div>
+    </div>
+    
+    <% if @listing_type == 'Property' %>
+      <%= f.fields_for :property do |property_form| %>
+        <div class="form-section">
+          <h3>Property Details</h3>
+          
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <%= property_form.label :property_type %>
+              <%= property_form.select :property_type, 
+                  [['Apartment', 'apartment'], ['House', 'house'], ['Condo', 'condo'], 
+                   ['Townhouse', 'townhouse'], ['Land', 'land'], ['Commercial', 'commercial']], 
+                  { include_blank: 'Select Property Type' }, 
+                  { class: 'form-control', required: true } %>
+            </div>
+            
+            <div class="form-group col-md-6">
+              <%= property_form.label :listing_type %>
+              <%= property_form.select :listing_type, 
+                  [['Rent', 'rent'], ['Sale', 'sale']], 
+                  { include_blank: 'Select Listing Type' }, 
+                  { class: 'form-control', required: true } %>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <%= property_form.label :bedrooms %>
+              <%= property_form.number_field :bedrooms, min: 0, class: 'form-control' %>
+            </div>
+            
+            <div class="form-group col-md-4">
+              <%= property_form.label :bathrooms %>
+              <%= property_form.number_field :bathrooms, min: 0, step: 0.5, class: 'form-control' %>
+            </div>
+            
+            <div class="form-group col-md-4">
+              <%= property_form.label :area %>
+              <div class="input-group">
+                <%= property_form.number_field :area, min: 0, step: 0.01, class: 'form-control' %>
+                <div class="input-group-append">
+                  <%= property_form.select :area_unit, [['sq ft', 'sq_ft'], ['sq m', 'sq_m']], {}, { class: 'form-control' } %>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <%= property_form.label :address %>
+            <%= property_form.text_field :address, class: 'form-control', required: true %>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <%= property_form.label :city %>
+              <%= property_form.text_field :city, class: 'form-control', required: true %>
+            </div>
+            
+            <div class="form-group col-md-3">
+              <%= property_form.label :state %>
+              <%= property_form.text_field :state, class: 'form-control', required: true %>
+            </div>
+            
+            <div class="form-group col-md-3">
+              <%= property_form.label :postal_code %>
+              <%= property_form.text_field :postal_code, class: 'form-control', required: true %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <%= property_form.label :country %>
+            <%= property_form.text_field :country, class: 'form-control', required: true %>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <%= property_form.label :furnished %>
+              <div class="form-check">
+                <%= property_form.check_box :furnished, class: 'form-check-input' %>
+                <label class="form-check-label">This property is furnished</label>
+              </div>
+            </div>
+            
+            <div class="form-group col-md-6">
+              <%= property_form.label :available_from %>
+              <%= property_form.date_field :available_from, class: 'form-control' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% elsif @listing_type == 'Restaurant' %>
+      <%= f.fields_for :restaurant do |restaurant_form| %>
+        <div class="form-section">
+          <h3>Restaurant Details</h3>
+          
+          <div class="form-group">
+            <%= restaurant_form.label :cuisine_type %>
+            <%= restaurant_form.select :cuisine_type, 
+                [['Italian', 'italian'], ['Chinese', 'chinese'], ['Mexican', 'mexican'], 
+                 ['Thai', 'thai'], ['Indian', 'indian'], ['American', 'american'],
+                 ['Japanese', 'japanese'], ['French', 'french'], ['Other', 'other']], 
+                { include_blank: 'Select Cuisine Type' }, 
+                { class: 'form-control', required: true } %>
+          </div>
+          
+          <div class="form-group">
+            <%= restaurant_form.label :address %>
+            <%= restaurant_form.text_field :address, class: 'form-control', required: true %>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <%= restaurant_form.label :city %>
+              <%= restaurant_form.text_field :city, class: 'form-control', required: true %>
+            </div>
+            
+            <div class="form-group col-md-3">
+              <%= restaurant_form.label :state %>
+              <%= restaurant_form.text_field :state, class: 'form-control', required: true %>
+            </div>
+            
+            <div class="form-group col-md-3">
+              <%= restaurant_form.label :postal_code %>
+              <%= restaurant_form.text_field :postal_code, class: 'form-control', required: true %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <%= restaurant_form.label :country %>
+            <%= restaurant_form.text_field :country, class: 'form-control', required: true %>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <div class="form-check">
+                <%= restaurant_form.check_box :delivery_available, class: 'form-check-input' %>
+                <%= restaurant_form.label :delivery_available, class: 'form-check-label' %>
+              </div>
+            </div>
+            
+            <div class="form-group col-md-4">
+              <div class="form-check">
+                <%= restaurant_form.check_box :takeout_available, class: 'form-check-input' %>
+                <%= restaurant_form.label :takeout_available, class: 'form-check-label' %>
+              </div>
+            </div>
+            
+            <div class="form-group col-md-4">
+              <div class="form-check">
+                <%= restaurant_form.check_box :reservation_required, class: 'form-check-input' %>
+                <%= restaurant_form.label :reservation_required, class: 'form-check-label' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% elsif @listing_type == 'Service' %>
+      <%= f.fields_for :service do |service_form| %>
+        <div class="form-section">
+          <h3>Service Details</h3>
+          
+          <div class="form-group">
+            <%= service_form.label :category_id %>
+            <%= service_form.collection_select :category_id, @categories, :id, :name, 
+                { include_blank: 'Select Category' }, 
+                { class: 'form-control', required: true } %>
+          </div>
+          
+          <div class="form-group">
+            <%= service_form.label :pricing_model %>
+            <%= service_form.select :pricing_model, 
+                [['Hourly', 'hourly'], ['Fixed', 'fixed'], ['Variable', 'variable']], 
+                { include_blank: 'Select Pricing Model' }, 
+                { class: 'form-control', required: true } %>
+          </div>
+          
+          <div class="form-group">
+            <%= service_form.label :duration_minutes, "Duration (minutes)" %>
+            <%= service_form.number_field :duration_minutes, min: 0, class: 'form-control' %>
+            <small class="form-text text-muted">For hourly services, enter the typical duration in minutes (e.g., 60 for 1 hour, 90 for 1.5 hours).</small>
+          </div>
+          
+          <div class="form-group">
+            <%= service_form.label :service_area %>
+            <%= service_form.text_field :service_area, class: 'form-control' %>
+            <small class="form-text text-muted">Enter the geographic area where you provide this service (e.g., "San Francisco Bay Area", "Within 50 miles of Chicago").</small>
+          </div>
+          
+          <div class="form-group">
+            <div class="form-check">
+              <%= service_form.check_box :remote_available, class: 'form-check-input' %>
+              <%= service_form.label :remote_available, "This service can be provided remotely", class: 'form-check-label' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+    
+    <div class="form-actions">
+      <%= f.submit "Save as Draft", class: "btn btn-secondary" %>
+      <%= f.submit "Submit for Approval", name: "submit_for_approval", class: "btn btn-primary" %>
+      <%= link_to "Cancel", vendor_dashboard_path, class: "btn btn-link" %>
+    </div>
+  <% end %>
+</div>

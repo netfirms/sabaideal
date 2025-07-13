@@ -22,7 +22,7 @@ module Komplex
     scope :by_vendor, ->(vendor_id) { where(vendor_id: vendor_id) }
     scope :current_and_upcoming, -> { where('ends_at >= ?', Time.current) }
 
-    enum status: {
+    enum :status, {
       pending: 'pending',
       active: 'active',
       completed: 'completed',

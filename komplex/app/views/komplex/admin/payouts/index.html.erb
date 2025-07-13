@@ -1,0 +1,68 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.payouts.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if can?(:create, Komplex::Payout) %>
+    <%= link_to Spree.t('komplex.payouts.new'), new_admin_payout_path, class: 'btn btn-primary' %>
+  <% end %>
+<% end %>
+
+<% if @payouts.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t('komplex.payouts.id') %></th>
+          <th><%= Spree.t('komplex.payouts.vendor') %></th>
+          <th><%= Spree.t('komplex.payouts.amount') %></th>
+          <th><%= Spree.t('komplex.payouts.status') %></th>
+          <th><%= Spree.t('komplex.payouts.transaction_id') %></th>
+          <th><%= Spree.t('komplex.payouts.created_at') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payouts.each do |payout| %>
+          <tr>
+            <td><%= payout.id %></td>
+            <td><%= payout.vendor.try(:name) %></td>
+            <td><%= payout.amount %></td>
+            <td>
+              <% if payout.pending? %>
+                <span class="badge badge-warning"><%= Spree.t('komplex.payouts.pending') %></span>
+              <% elsif payout.processing? %>
+                <span class="badge badge-info"><%= Spree.t('komplex.payouts.processing') %></span>
+              <% elsif payout.completed? %>
+                <span class="badge badge-success"><%= Spree.t('komplex.payouts.completed') %></span>
+              <% elsif payout.failed? %>
+                <span class="badge badge-danger"><%= Spree.t('komplex.payouts.failed') %></span>
+              <% end %>
+            </td>
+            <td><%= payout.transaction_id %></td>
+            <td><%= payout.created_at.to_date %></td>
+            <td class="actions">
+              <% if can?(:show, payout) %>
+                <%= link_to_with_icon 'eye', Spree.t('actions.view'), admin_payout_path(payout), class: 'btn btn-info btn-sm', no_text: true %>
+              <% end %>
+              <% if can?(:process_payout, payout) && payout.pending? %>
+                <%= link_to Spree.t('komplex.payouts.process'), process_payout_admin_payout_path(payout), method: :post, class: 'btn btn-primary btn-sm' %>
+              <% end %>
+              <% if can?(:mark_as_completed, payout) && payout.processing? %>
+                <%= link_to Spree.t('komplex.payouts.mark_as_completed'), mark_as_completed_admin_payout_path(payout), method: :post, class: 'btn btn-success btn-sm' %>
+              <% end %>
+              <% if can?(:mark_as_failed, payout) && payout.processing? %>
+                <%= link_to Spree.t('komplex.payouts.mark_as_failed'), mark_as_failed_admin_payout_path(payout), method: :post, class: 'btn btn-danger btn-sm' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= paginate @payouts %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('komplex.payouts.no_payouts_found') %>
+  </div>
+<% end %>

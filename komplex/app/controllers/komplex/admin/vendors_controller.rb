@@ -2,11 +2,23 @@
 
 module Komplex
   module Admin
-    class VendorsController < Spree::Admin::ResourceController
-      before_action :load_data, except: [:index, :new, :create]
+    class VendorsController < Komplex::Admin::BaseController
+      before_action :load_data, except: [:index]
 
       def index
-        @vendors = Komplex::Vendor.all.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+        @vendors = Komplex::Vendor.all.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
+      end
+
+      def new
+        @vendor = Komplex::Vendor.new
+      end
+
+      def edit
+        @vendor = Komplex::Vendor.find(params[:id])
+      end
+
+      def show
+        @vendor = Komplex::Vendor.find(params[:id])
       end
 
       def approve
@@ -33,37 +45,37 @@ module Komplex
 
       def listings
         @vendor = Komplex::Vendor.find(params[:id])
-        @listings = @vendor.listings.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+        @listings = @vendor.listings.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def commissions
         @vendor = Komplex::Vendor.find(params[:id])
-        @commissions = @vendor.commissions.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+        @commissions = @vendor.commissions.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def payouts
         @vendor = Komplex::Vendor.find(params[:id])
-        @payouts = @vendor.payouts.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+        @payouts = @vendor.payouts.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def create_payout
         @vendor = Komplex::Vendor.find(params[:id])
         amount = params[:amount].to_f
-        
+
         if amount <= 0
           flash[:error] = t('komplex.admin.vendors.create_payout.invalid_amount')
           redirect_to payouts_admin_vendor_path(@vendor) and return
         end
-        
+
         payout = Komplex::Payout.create_for_vendor(@vendor, amount: amount, notes: params[:notes])
-        
+
         if payout&.persisted?
           flash[:success] = t('komplex.admin.vendors.create_payout.success', amount: amount)
           payout.process!
         else
           flash[:error] = t('komplex.admin.vendors.create_payout.error')
         end
-        
+
         redirect_to payouts_admin_vendor_path(@vendor)
       end
 
@@ -71,6 +83,7 @@ module Komplex
 
       def load_data
         @users = Spree::User.all
+        @statuses = Komplex::Vendor.statuses.keys
       end
 
       def model_class

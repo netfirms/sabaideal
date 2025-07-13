@@ -1,0 +1,61 @@
+<div class="restaurant-details">
+  <div class="restaurant-overview">
+    <div class="restaurant-feature">
+      <i class="icon-cuisine"></i>
+      <span><%= restaurant.cuisine_type.titleize %> Cuisine</span>
+    </div>
+    
+    <% if restaurant.delivery_available? %>
+      <div class="restaurant-feature">
+        <i class="icon-delivery"></i>
+        <span>Delivery Available</span>
+      </div>
+    <% end %>
+    
+    <% if restaurant.takeout_available? %>
+      <div class="restaurant-feature">
+        <i class="icon-takeout"></i>
+        <span>Takeout Available</span>
+      </div>
+    <% end %>
+    
+    <% if restaurant.reservation_required? %>
+      <div class="restaurant-feature">
+        <i class="icon-reservation"></i>
+        <span>Reservation Required</span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if restaurant.hours.present? %>
+    <div class="restaurant-hours">
+      <h3>Hours of Operation</h3>
+      <table class="hours-table">
+        <% restaurant.hours.each do |day, hours| %>
+          <tr>
+            <td><strong><%= day.titleize %></strong></td>
+            <td><%= hours %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  <% end %>
+
+  <% if restaurant.menu_items.present? %>
+    <div class="restaurant-menu">
+      <h3>Menu Highlights</h3>
+      <div class="menu-items">
+        <% restaurant.menu_items.each do |item| %>
+          <div class="menu-item">
+            <div class="menu-item-header">
+              <h4><%= item.name %></h4>
+              <span class="menu-item-price"><%= number_to_currency(item.price) %></span>
+            </div>
+            <p class="menu-item-description"><%= item.description %></p>
+          </div>
+        <% end %>
+      </div>
+      <p class="menu-note">* This is a partial menu. Please contact the restaurant for the full menu.</p>
+    </div>
+  <% end %>
+</div>

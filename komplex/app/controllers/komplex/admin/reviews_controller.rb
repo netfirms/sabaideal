@@ -2,19 +2,19 @@
 
 module Komplex
   module Admin
-    class ReviewsController < Spree::Admin::ResourceController
+    class ReviewsController < Komplex::Admin::BaseController
       before_action :load_data, except: [:index, :destroy]
 
       def index
         @reviews = Komplex::Review.all
-        
+
         # Apply filters
         @reviews = @reviews.by_listing(params[:listing_id]) if params[:listing_id].present?
         @reviews = @reviews.by_user(params[:user_id]) if params[:user_id].present?
         @reviews = @reviews.where(approved: params[:approved]) if params[:approved].present?
         @reviews = @reviews.where('rating >= ?', params[:min_rating]) if params[:min_rating].present?
         @reviews = @reviews.where('rating <= ?', params[:max_rating]) if params[:max_rating].present?
-        
+
         # Apply sorting
         case params[:sort]
         when 'newest'
@@ -28,8 +28,8 @@ module Komplex
         else
           @reviews = @reviews.order(created_at: :desc)
         end
-        
-        @reviews = @reviews.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+
+        @reviews = @reviews.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def approve
@@ -60,7 +60,7 @@ module Komplex
 
       def update
         @review = Komplex::Review.find(params[:id])
-        
+
         if @review.update(review_params)
           flash[:success] = t('komplex.admin.reviews.update.success')
           redirect_to admin_reviews_path
@@ -73,13 +73,13 @@ module Komplex
 
       def destroy
         @review = Komplex::Review.find(params[:id])
-        
+
         if @review.destroy
           flash[:success] = t('komplex.admin.reviews.destroy.success')
         else
           flash[:error] = t('komplex.admin.reviews.destroy.error')
         end
-        
+
         redirect_to admin_reviews_path
       end
 

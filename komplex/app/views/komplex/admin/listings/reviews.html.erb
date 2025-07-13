@@ -1,0 +1,53 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.listings.reviews_for', listing: @listing.title) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('actions.back'), admin_listing_path(@listing), class: 'btn btn-secondary' %>
+<% end %>
+
+<% if @reviews.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t('komplex.reviews.reviewer') %></th>
+          <th><%= Spree.t('komplex.reviews.rating') %></th>
+          <th><%= Spree.t('komplex.reviews.title') %></th>
+          <th><%= Spree.t('komplex.reviews.content') %></th>
+          <th><%= Spree.t('komplex.reviews.status') %></th>
+          <th><%= Spree.t('komplex.reviews.created_at') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reviews.each do |review| %>
+          <tr>
+            <td><%= review.user.try(:email) || Spree.t('komplex.reviews.guest') %></td>
+            <td><%= review.rating %>/5</td>
+            <td><%= review.title %></td>
+            <td><%= truncate(review.content, length: 100) %></td>
+            <td><span class="badge badge-<%= review.approved? ? 'success' : 'warning' %>"><%= review.status %></span></td>
+            <td><%= review.created_at.to_date %></td>
+            <td class="actions">
+              <% if can?(:edit, review) %>
+                <%= link_to_edit review, no_text: true, class: 'edit' %>
+              <% end %>
+              <% if can?(:approve, review) && !review.approved? %>
+                <%= link_to Spree.t('komplex.reviews.approve'), approve_admin_review_path(review), method: :post, class: 'btn btn-success btn-sm' %>
+              <% end %>
+              <% if can?(:reject, review) && !review.rejected? %>
+                <%= link_to Spree.t('komplex.reviews.reject'), reject_admin_review_path(review), method: :post, class: 'btn btn-danger btn-sm' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= paginate @reviews %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('komplex.reviews.no_reviews_found') %>
+  </div>
+<% end %>

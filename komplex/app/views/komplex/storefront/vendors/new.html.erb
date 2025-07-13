@@ -1,0 +1,167 @@
+<div class="vendor-registration">
+  <div class="registration-header">
+    <h1>Become a Vendor</h1>
+    <p>Register your business to start listing properties, restaurants, or services on our marketplace.</p>
+  </div>
+  
+  <%= form_with model: @vendor, url: vendors_path, local: true, class: 'vendor-form' do |f| %>
+    <% if @vendor.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@vendor.errors.count, "error") %> prohibited this vendor from being saved:</h4>
+        <ul>
+          <% @vendor.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <div class="form-section">
+      <h3>Business Information</h3>
+      
+      <div class="form-group">
+        <%= f.label :name, "Business Name" %>
+        <%= f.text_field :name, class: 'form-control', required: true %>
+        <small class="form-text text-muted">Enter the official name of your business as it should appear on the marketplace.</small>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :description, "Business Description" %>
+        <%= f.text_area :description, rows: 5, class: 'form-control', required: true %>
+        <small class="form-text text-muted">Provide a detailed description of your business, including the types of properties, restaurants, or services you offer.</small>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :logo, "Business Logo" %>
+        <%= f.file_field :logo, class: 'form-control-file' %>
+        <small class="form-text text-muted">Upload a logo for your business. Recommended size: 400x400 pixels.</small>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Contact Information</h3>
+      
+      <div class="form-group">
+        <%= f.label :contact_name, "Contact Person" %>
+        <%= f.text_field :contact_name, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :contact_email, "Contact Email" %>
+        <%= f.email_field :contact_email, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :contact_phone, "Contact Phone" %>
+        <%= f.telephone_field :contact_phone, class: 'form-control', required: true %>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Business Address</h3>
+      
+      <div class="form-group">
+        <%= f.label :address, "Street Address" %>
+        <%= f.text_field :address, class: 'form-control', required: true %>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <%= f.label :city %>
+          <%= f.text_field :city, class: 'form-control', required: true %>
+        </div>
+        
+        <div class="form-group col-md-3">
+          <%= f.label :state %>
+          <%= f.text_field :state, class: 'form-control', required: true %>
+        </div>
+        
+        <div class="form-group col-md-3">
+          <%= f.label :postal_code %>
+          <%= f.text_field :postal_code, class: 'form-control', required: true %>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <%= f.label :country %>
+        <%= f.text_field :country, class: 'form-control', required: true %>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Business Type</h3>
+      
+      <div class="form-group">
+        <%= f.label :business_type, "What type of listings will you primarily offer?" %>
+        <div class="business-type-options">
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'property', false, class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_property">
+              <i class="icon-property"></i> Properties (Real Estate)
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'restaurant', false, class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_restaurant">
+              <i class="icon-restaurant"></i> Restaurants
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'service', false, class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_service">
+              <i class="icon-service"></i> Services
+            </label>
+          </div>
+          
+          <div class="form-check">
+            <%= radio_button_tag :business_type, 'multiple', false, class: 'form-check-input' %>
+            <label class="form-check-label" for="business_type_multiple">
+              <i class="icon-multiple"></i> Multiple Types
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h3>Terms and Conditions</h3>
+      
+      <div class="form-group">
+        <div class="form-check">
+          <%= check_box_tag :terms_accepted, '1', false, class: 'form-check-input', required: true %>
+          <label class="form-check-label" for="terms_accepted">
+            I have read and agree to the <%= link_to "Vendor Terms and Conditions", "#", target: "_blank" %>.
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="form-check">
+          <%= check_box_tag :commission_accepted, '1', false, class: 'form-check-input', required: true %>
+          <label class="form-check-label" for="commission_accepted">
+            I understand that a commission of <%= number_to_percentage(Komplex.configuration.default_commission_rate * 100, precision: 0) %> will be charged on all sales made through the marketplace.
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <%= f.submit "Register as Vendor", class: "btn btn-primary" %>
+      <%= link_to "Cancel", root_path, class: "btn btn-link" %>
+    </div>
+  <% end %>
+  
+  <div class="registration-info">
+    <h3>What happens next?</h3>
+    <% if Komplex.configuration.vendor_approval_required %>
+      <p>After submitting your registration, our team will review your application. This process typically takes 1-2 business days. You'll receive an email notification once your vendor account is approved.</p>
+    <% else %>
+      <p>After submitting your registration, your vendor account will be immediately activated, and you can start creating listings right away.</p>
+    <% end %>
+    
+    <h3>Need help?</h3>
+    <p>If you have any questions about the vendor registration process, please contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
+  </div>
+</div>

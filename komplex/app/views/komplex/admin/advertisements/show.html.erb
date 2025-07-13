@@ -1,0 +1,138 @@
+<% content_for :page_title do %>
+  <%= @advertisement.title %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if can?(:edit, @advertisement) %>
+    <%= link_to Spree.t('actions.edit'), edit_admin_advertisement_path(@advertisement), class: 'btn btn-primary' %>
+  <% end %>
+  <%= link_to Spree.t('actions.back'), admin_advertisements_path, class: 'btn btn-secondary' %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.advertisements.details') %>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.title') %></label>
+          <p><%= @advertisement.title %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.vendor') %></label>
+          <p><%= @advertisement.vendor.try(:name) || Spree.t('komplex.advertisements.platform_wide') %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.placement') %></label>
+          <p><%= @advertisement.placement %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.ad_type') %></label>
+          <p><%= @advertisement.ad_type %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.description') %></label>
+          <p><%= @advertisement.description %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.starts_at') %></label>
+          <p><%= @advertisement.starts_at.to_s(:long) %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.ends_at') %></label>
+          <p><%= @advertisement.ends_at.to_s(:long) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.cost') %></label>
+          <p><%= @advertisement.cost %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.status') %></label>
+          <p>
+            <% if @advertisement.active? %>
+              <span class="badge badge-success"><%= Spree.t('komplex.advertisements.active') %></span>
+            <% elsif @advertisement.pending? %>
+              <span class="badge badge-warning"><%= Spree.t('komplex.advertisements.pending') %></span>
+            <% elsif @advertisement.rejected? %>
+              <span class="badge badge-danger"><%= Spree.t('komplex.advertisements.rejected') %></span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.listing') %></label>
+          <p><%= @advertisement.listing.try(:title) || Spree.t('komplex.advertisements.no_listing') %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.advertisements.created_at') %></label>
+          <p><%= @advertisement.created_at.to_s(:long) %></p>
+        </div>
+      </div>
+    </div>
+
+    <% if @advertisement.image.attached? %>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label><%= Spree.t('komplex.advertisements.image') %></label>
+            <div>
+              <%= image_tag @advertisement.image, class: 'img-fluid', style: 'max-height: 300px;' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.advertisements.actions') %>
+  </div>
+  <div class="card-body">
+    <div class="btn-group">
+      <% if can?(:approve, @advertisement) && @advertisement.pending? %>
+        <%= link_to Spree.t('komplex.advertisements.approve'), approve_admin_advertisement_path(@advertisement), method: :post, class: 'btn btn-success' %>
+      <% end %>
+      <% if can?(:reject, @advertisement) && @advertisement.pending? %>
+        <%= link_to Spree.t('komplex.advertisements.reject'), reject_admin_advertisement_path(@advertisement), method: :post, class: 'btn btn-danger' %>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,114 @@
+<% content_for :page_title do %>
+  <%= @listing.title %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if can?(:edit, @listing) %>
+    <%= link_to Spree.t('actions.edit'), edit_admin_listing_path(@listing), class: 'btn btn-primary' %>
+  <% end %>
+  <%= link_to Spree.t('actions.back'), admin_listings_path, class: 'btn btn-secondary' %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.listings.details') %>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.title') %></label>
+          <p><%= @listing.title %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.type') %></label>
+          <p><%= @listing.type %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.vendor') %></label>
+          <p><%= @listing.vendor.try(:name) %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.price') %></label>
+          <p><%= @listing.price %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.description') %></label>
+          <p><%= @listing.description %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.status') %></label>
+          <p><span class="badge badge-<%= @listing.published? ? 'success' : 'warning' %>"><%= @listing.status %></span></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.featured') %></label>
+          <p><%= @listing.featured? ? Spree.t('yes') : Spree.t('no') %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.created_at') %></label>
+          <p><%= @listing.created_at.to_s(:long) %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.listings.updated_at') %></label>
+          <p><%= @listing.updated_at.to_s(:long) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.listings.actions') %>
+  </div>
+  <div class="card-body">
+    <div class="btn-group">
+      <% if can?(:approve, @listing) && !@listing.published? %>
+        <%= link_to Spree.t('komplex.listings.approve'), approve_admin_listing_path(@listing), method: :post, class: 'btn btn-success' %>
+      <% end %>
+      <% if can?(:reject, @listing) && !@listing.rejected? %>
+        <%= link_to Spree.t('komplex.listings.reject'), reject_admin_listing_path(@listing), method: :post, class: 'btn btn-danger' %>
+      <% end %>
+      <% if can?(:feature, @listing) && !@listing.featured? %>
+        <%= link_to Spree.t('komplex.listings.feature'), feature_admin_listing_path(@listing), method: :post, class: 'btn btn-info' %>
+      <% end %>
+      <% if can?(:unfeature, @listing) && @listing.featured? %>
+        <%= link_to Spree.t('komplex.listings.unfeature'), unfeature_admin_listing_path(@listing), method: :post, class: 'btn btn-warning' %>
+      <% end %>
+      <% if can?(:reviews, @listing) %>
+        <%= link_to Spree.t('komplex.listings.reviews'), reviews_admin_listing_path(@listing), class: 'btn btn-info' %>
+      <% end %>
+      <% if can?(:convert_to_product, @listing) %>
+        <%= link_to Spree.t('komplex.listings.convert_to_product'), convert_to_product_admin_listing_path(@listing), method: :post, class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+</div>

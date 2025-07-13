@@ -18,7 +18,7 @@ module Komplex
     scope :recent, -> { order(updated_at: :desc) }
     scope :with_unread_messages, -> { joins(:messages).where(komplex_messages: { read: false }) }
 
-    enum status: {
+    enum :status, {
       active: 'active',
       archived: 'archived'
     }

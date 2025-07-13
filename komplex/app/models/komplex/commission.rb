@@ -16,7 +16,7 @@ module Komplex
     scope :by_date_range, ->(start_date, end_date) { where(created_at: start_date..end_date) }
     scope :ready_for_payout, -> { pending.where('created_at <= ?', 14.days.ago) }
 
-    enum status: {
+    enum :status, {
       pending: 'pending',
       paid: 'paid',
       failed: 'failed'
@@ -55,7 +55,7 @@ module Komplex
     def self.calculate_commission(amount, commission_rate)
       commission_amount = (amount * commission_rate).round(2)
       vendor_amount = amount - commission_amount
-      
+
       {
         commission_amount: commission_amount,
         vendor_amount: vendor_amount

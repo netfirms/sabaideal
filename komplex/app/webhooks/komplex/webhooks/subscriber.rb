@@ -3,7 +3,19 @@
 module Komplex
   module Webhooks
     class Subscriber
-      include Spree::Event::Subscriber
+      if defined?(Spree::Event::Subscriber)
+        include Spree::Event::Subscriber
+      else
+        # Fallback if Spree::Event::Subscriber is not available
+        def self.event_action(action)
+          @event_actions ||= []
+          @event_actions << action
+        end
+
+        def self.event_actions
+          @event_actions ||= []
+        end
+      end
 
       # Order events
       event_action :order_finalized
@@ -91,7 +103,7 @@ module Komplex
       def handle_commission_cancellation(order)
         # Find commissions for this order
         commissions = Komplex::Commission.where(order_id: order.id, status: 'pending')
-        
+
         # Mark commissions as failed
         commissions.each do |commission|
           commission.mark_as_failed!("Order #{order.number} was canceled")

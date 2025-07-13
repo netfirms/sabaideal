@@ -1,0 +1,194 @@
+<div class="vendor-profile">
+  <div class="vendor-header">
+    <div class="vendor-logo">
+      <% if @vendor.logo.attached? %>
+        <%= image_tag @vendor.logo, class: 'img-fluid' %>
+      <% else %>
+        <div class="no-logo">
+          <i class="icon-store"></i>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="vendor-info">
+      <h1><%= @vendor.name %></h1>
+      <div class="vendor-meta">
+        <span><i class="icon-calendar"></i> Member since <%= @vendor.created_at.strftime("%B %Y") %></span>
+        <span><i class="icon-listing"></i> <%= @vendor.listings.published.count %> active listings</span>
+        <% if @vendor.average_rating.present? %>
+          <span><i class="icon-star"></i> <%= @vendor.average_rating.round(1) %> (<%= @vendor.reviews.count %> reviews)</span>
+        <% end %>
+      </div>
+      
+      <div class="vendor-categories">
+        <% if @vendor.listings.by_type('Property').exists? %>
+          <span class="badge badge-property">Properties</span>
+        <% end %>
+        
+        <% if @vendor.listings.by_type('Restaurant').exists? %>
+          <span class="badge badge-restaurant">Restaurants</span>
+        <% end %>
+        
+        <% if @vendor.listings.by_type('Service').exists? %>
+          <span class="badge badge-service">Services</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="vendor-description">
+    <h3>About <%= @vendor.name %></h3>
+    <%= simple_format @vendor.description %>
+  </div>
+  
+  <div class="vendor-listings">
+    <div class="listings-header">
+      <h2>Listings by <%= @vendor.name %></h2>
+      
+      <div class="listings-filter">
+        <% if @vendor.listings.by_type('Property').exists? || @vendor.listings.by_type('Restaurant').exists? || @vendor.listings.by_type('Service').exists? %>
+          Filter by:
+          <%= link_to "All", vendor_path(@vendor), class: params[:type].blank? ? 'active' : '' %>
+          
+          <% if @vendor.listings.by_type('Property').exists? %>
+            <%= link_to "Properties", vendor_path(@vendor, type: 'Property'), class: params[:type] == 'Property' ? 'active' : '' %>
+          <% end %>
+          
+          <% if @vendor.listings.by_type('Restaurant').exists? %>
+            <%= link_to "Restaurants", vendor_path(@vendor, type: 'Restaurant'), class: params[:type] == 'Restaurant' ? 'active' : '' %>
+          <% end %>
+          
+          <% if @vendor.listings.by_type('Service').exists? %>
+            <%= link_to "Services", vendor_path(@vendor, type: 'Service'), class: params[:type] == 'Service' ? 'active' : '' %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="listings-grid">
+      <% @listings.each do |listing| %>
+        <div class="listing-card">
+          <%= link_to listing_path(listing) do %>
+            <div class="listing-image">
+              <% if listing.images.attached? %>
+                <%= image_tag listing.images.first %>
+              <% else %>
+                <div class="no-image">No Image</div>
+              <% end %>
+              <div class="listing-badge"><%= listing.listable_type.demodulize %></div>
+            </div>
+            
+            <div class="listing-details">
+              <h3><%= listing.title %></h3>
+              <p class="listing-price"><%= number_to_currency(listing.price) %></p>
+              
+              <% if listing.listable_type == 'Komplex::Property' %>
+                <div class="property-features">
+                  <span><%= listing.listable.bedrooms %> bd</span>
+                  <span><%= listing.listable.bathrooms %> ba</span>
+                  <span><%= listing.listable.area %> <%= listing.listable.area_unit %></span>
+                </div>
+                <p class="listing-location"><%= listing.listable.city %>, <%= listing.listable.state %></p>
+              <% elsif listing.listable_type == 'Komplex::Restaurant' %>
+                <p class="restaurant-cuisine"><%= listing.listable.cuisine_type.titleize %> Cuisine</p>
+                <p class="listing-location"><%= listing.listable.city %>, <%= listing.listable.state %></p>
+              <% elsif listing.listable_type == 'Komplex::Service' %>
+                <p class="service-category"><%= listing.listable.category.name %></p>
+                <p class="service-pricing"><%= listing.listable.pricing_model.titleize %> pricing</p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    
+    <% if @listings.empty? %>
+      <div class="no-listings">
+        <p>No listings found.</p>
+      </div>
+    <% end %>
+    
+    <div class="pagination">
+      <%= paginate @listings %>
+    </div>
+  </div>
+  
+  <% if @vendor.reviews.any? %>
+    <div class="vendor-reviews">
+      <h3>Customer Reviews</h3>
+      
+      <div class="reviews-summary">
+        <div class="average-rating">
+          <span class="rating-value"><%= @vendor.average_rating.round(1) %></span>
+          <div class="rating-stars">
+            <% full_stars = @vendor.average_rating.floor %>
+            <% half_star = (@vendor.average_rating - full_stars) >= 0.5 %>
+            <% empty_stars = 5 - full_stars - (half_star ? 1 : 0) %>
+            
+            <% full_stars.times do %>
+              <i class="icon-star-full"></i>
+            <% end %>
+            
+            <% if half_star %>
+              <i class="icon-star-half"></i>
+            <% end %>
+            
+            <% empty_stars.times do %>
+              <i class="icon-star-empty"></i>
+            <% end %>
+          </div>
+          <span class="rating-count">(<%= @vendor.reviews.count %> reviews)</span>
+        </div>
+      </div>
+      
+      <div class="reviews-list">
+        <% @vendor.reviews.approved.order(created_at: :desc).limit(5).each do |review| %>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <span class="reviewer-name"><%= review.user.full_name %></span>
+                <span class="review-date"><%= review.created_at.strftime("%B %d, %Y") %></span>
+              </div>
+              
+              <div class="review-rating">
+                <% review.rating.times do %>
+                  <i class="icon-star-full"></i>
+                <% end %>
+                <% (5 - review.rating).times do %>
+                  <i class="icon-star-empty"></i>
+                <% end %>
+              </div>
+            </div>
+            
+            <div class="review-content">
+              <%= simple_format review.comment %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="contact-vendor">
+    <h3>Contact <%= @vendor.name %></h3>
+    <% if spree_current_user %>
+      <%= form_with url: '#', local: true, class: 'contact-form' do |f| %>
+        <%= f.hidden_field :vendor_id, value: @vendor.id %>
+        
+        <div class="form-group">
+          <%= f.label :subject %>
+          <%= f.text_field :subject, class: 'form-control', required: true %>
+        </div>
+        
+        <div class="form-group">
+          <%= f.label :message %>
+          <%= f.text_area :message, rows: 5, class: 'form-control', required: true %>
+        </div>
+        
+        <%= f.submit "Send Message", class: "btn btn-primary" %>
+      <% end %>
+    <% else %>
+      <p>Please <%= link_to "sign in", spree.login_path %> to contact this vendor.</p>
+    <% end %>
+  </div>
+</div>

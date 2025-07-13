@@ -1,3 +1,13 @@
+PATH
+  remote: komplex
+  specs:
+    komplex (0.1.0)
+      rails (~> 8.0.0)
+      spree_admin (>= 5.0.0)
+      spree_api (>= 4.6.0)
+      spree_core (>= 4.6.0)
+      spree_extension
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -894,6 +904,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jsonapi-rspec
+  komplex!
   letter_opener
   mini_racer
   pg (~> 1.1)
@@ -907,7 +918,7 @@ DEPENDENCIES
   rspec-rails (~> 8.0)
   rspec-retry
   rspec_junit_formatter
-  rubocop (~> 1.23)
+  rubocop (~> 1.78)
   rubocop-performance
   rubocop-rails
   rubocop-rspec

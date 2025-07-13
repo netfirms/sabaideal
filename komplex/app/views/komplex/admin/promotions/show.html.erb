@@ -1,0 +1,124 @@
+<% content_for :page_title do %>
+  <%= @promotion.title %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if can?(:edit, @promotion) %>
+    <%= link_to Spree.t('actions.edit'), edit_admin_promotion_path(@promotion), class: 'btn btn-primary' %>
+  <% end %>
+  <%= link_to Spree.t('actions.back'), admin_promotions_path, class: 'btn btn-secondary' %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.promotions.details') %>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.title') %></label>
+          <p><%= @promotion.title %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.promotion_type') %></label>
+          <p><%= @promotion.promotion_type %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.discount_amount') %></label>
+          <p><%= @promotion.discount_amount %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.vendor') %></label>
+          <p><%= @promotion.vendor.try(:name) || Spree.t('komplex.promotions.platform_wide') %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.description') %></label>
+          <p><%= @promotion.description %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.starts_at') %></label>
+          <p><%= @promotion.starts_at.to_s(:long) %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.ends_at') %></label>
+          <p><%= @promotion.ends_at.to_s(:long) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.code') %></label>
+          <p><%= @promotion.code %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.usage_limit') %></label>
+          <p><%= @promotion.usage_limit %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.listing') %></label>
+          <p><%= @promotion.listing.try(:title) || Spree.t('komplex.promotions.all_listings') %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.status') %></label>
+          <p>
+            <% if @promotion.active? %>
+              <span class="badge badge-success"><%= Spree.t('komplex.promotions.active') %></span>
+            <% elsif @promotion.upcoming? %>
+              <span class="badge badge-info"><%= Spree.t('komplex.promotions.upcoming') %></span>
+            <% elsif @promotion.expired? %>
+              <span class="badge badge-warning"><%= Spree.t('komplex.promotions.expired') %></span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.created_at') %></label>
+          <p><%= @promotion.created_at.to_s(:long) %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.promotions.updated_at') %></label>
+          <p><%= @promotion.updated_at.to_s(:long) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

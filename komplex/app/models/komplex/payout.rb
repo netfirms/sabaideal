@@ -13,7 +13,7 @@ module Komplex
     scope :by_vendor, ->(vendor_id) { where(vendor_id: vendor_id) }
     scope :by_date_range, ->(start_date, end_date) { where(created_at: start_date..end_date) }
 
-    enum status: {
+    enum :status, {
       pending: 'pending',
       processing: 'processing',
       completed: 'completed',

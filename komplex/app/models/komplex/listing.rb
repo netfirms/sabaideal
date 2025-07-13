@@ -15,7 +15,7 @@ module Komplex
     validates :title, presence: true
     validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
-    enum status: {
+    enum :status, {
       draft: 'draft',
       pending: 'pending',
       published: 'published',
@@ -72,6 +72,10 @@ module Komplex
 
     def service?
       listable_type == 'Komplex::Service'
+    end
+
+    def type
+      listable_type.to_s.demodulize
     end
 
     private

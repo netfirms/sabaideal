@@ -16,6 +16,11 @@ mkdir -p "$HOOK_DIR"
 cp "$SCRIPT_DIR/pre-commit" "$HOOK_DIR/pre-commit"
 chmod +x "$HOOK_DIR/pre-commit"
 
+# Copy post-commit hook
+cp "$SCRIPT_DIR/post-commit" "$HOOK_DIR/post-commit"
+chmod +x "$HOOK_DIR/post-commit"
+
 echo "Git hooks installed successfully!"
 echo "The following hooks are now active:"
 echo "- pre-commit: Runs RuboCop and Brakeman before each commit"
+echo "- post-commit: Performs actions after each commit"

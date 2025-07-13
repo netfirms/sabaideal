@@ -20,11 +20,11 @@ Gem::Specification.new do |spec|
     Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
-  spec.add_dependency 'rails', '>= 7.0.0'
+  spec.add_dependency 'rails', '~> 8.0.0'
   spec.add_dependency 'spree_core', '>= 4.6.0'
   spec.add_dependency 'spree_api', '>= 4.6.0'
-  spec.add_dependency 'spree_backend', '>= 4.6.0'
+  spec.add_dependency 'spree_admin', '>= 5.0.0'
   spec.add_dependency 'spree_extension'
-  
+
   spec.add_development_dependency 'spree_dev_tools'
 end

@@ -27,6 +27,9 @@ Rails.application.routes.draw do
   # the default of "spree".
   mount Spree::Core::Engine, at: '/'
 
+  # Mount the Komplex engine
+  mount Komplex::Engine, at: '/'
+
   mount Sidekiq::Web => "/sidekiq" # access it at http://localhost:3000/sidekiq
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

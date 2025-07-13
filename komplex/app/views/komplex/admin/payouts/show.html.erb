@@ -1,0 +1,200 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.payouts.details_for', id: @payout.id) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('actions.back'), admin_payouts_path, class: 'btn btn-secondary' %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.payouts.details') %>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.id') %></label>
+          <p><%= @payout.id %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.vendor') %></label>
+          <p><%= @payout.vendor.try(:name) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.amount') %></label>
+          <p><%= @payout.amount %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.status') %></label>
+          <p>
+            <% if @payout.pending? %>
+              <span class="badge badge-warning"><%= Spree.t('komplex.payouts.pending') %></span>
+            <% elsif @payout.processing? %>
+              <span class="badge badge-info"><%= Spree.t('komplex.payouts.processing') %></span>
+            <% elsif @payout.completed? %>
+              <span class="badge badge-success"><%= Spree.t('komplex.payouts.completed') %></span>
+            <% elsif @payout.failed? %>
+              <span class="badge badge-danger"><%= Spree.t('komplex.payouts.failed') %></span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.transaction_id') %></label>
+          <p><%= @payout.transaction_id || Spree.t('komplex.payouts.no_transaction_id') %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.failure_reason') %></label>
+          <p><%= @payout.failure_reason || Spree.t('komplex.payouts.no_failure_reason') %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.notes') %></label>
+          <p><%= @payout.notes || Spree.t('komplex.payouts.no_notes') %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.created_at') %></label>
+          <p><%= @payout.created_at.to_s(:long) %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="form-group">
+          <label><%= Spree.t('komplex.payouts.updated_at') %></label>
+          <p><%= @payout.updated_at.to_s(:long) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.payouts.actions') %>
+  </div>
+  <div class="card-body">
+    <div class="btn-group">
+      <% if can?(:process_payout, @payout) && @payout.pending? %>
+        <%= link_to Spree.t('komplex.payouts.process'), process_payout_admin_payout_path(@payout), method: :post, class: 'btn btn-primary' %>
+      <% end %>
+      <% if can?(:mark_as_completed, @payout) && @payout.processing? %>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#markAsCompletedModal">
+          <%= Spree.t('komplex.payouts.mark_as_completed') %>
+        </button>
+      <% end %>
+      <% if can?(:mark_as_failed, @payout) && @payout.processing? %>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#markAsFailedModal">
+          <%= Spree.t('komplex.payouts.mark_as_failed') %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @commissions.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <%= Spree.t('komplex.payouts.included_commissions') %>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= Spree.t('komplex.commissions.id') %></th>
+              <th><%= Spree.t('komplex.commissions.order') %></th>
+              <th><%= Spree.t('komplex.commissions.amount') %></th>
+              <th><%= Spree.t('komplex.commissions.paid_at') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @commissions.each do |commission| %>
+              <tr>
+                <td><%= commission.id %></td>
+                <td><%= commission.order.try(:number) %></td>
+                <td><%= commission.amount %></td>
+                <td><%= commission.paid_at.to_s(:long) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Mark as Completed Modal -->
+<div class="modal fade" id="markAsCompletedModal" tabindex="-1" role="dialog" aria-labelledby="markAsCompletedModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= form_tag mark_as_completed_admin_payout_path(@payout), method: :post do %>
+        <div class="modal-header">
+          <h5 class="modal-title" id="markAsCompletedModalLabel"><%= Spree.t('komplex.payouts.mark_as_completed') %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <%= label_tag :transaction_id, Spree.t('komplex.payouts.transaction_id') %>
+            <%= text_field_tag :transaction_id, nil, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= Spree.t('actions.cancel') %></button>
+          <%= submit_tag Spree.t('komplex.payouts.mark_as_completed'), class: 'btn btn-success' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Mark as Failed Modal -->
+<div class="modal fade" id="markAsFailedModal" tabindex="-1" role="dialog" aria-labelledby="markAsFailedModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%= form_tag mark_as_failed_admin_payout_path(@payout), method: :post do %>
+        <div class="modal-header">
+          <h5 class="modal-title" id="markAsFailedModalLabel"><%= Spree.t('komplex.payouts.mark_as_failed') %></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <%= label_tag :failure_reason, Spree.t('komplex.payouts.failure_reason') %>
+            <%= text_area_tag :failure_reason, nil, class: 'form-control', rows: 3 %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= Spree.t('actions.cancel') %></button>
+          <%= submit_tag Spree.t('komplex.payouts.mark_as_failed'), class: 'btn btn-danger' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

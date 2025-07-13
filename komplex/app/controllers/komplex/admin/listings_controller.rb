@@ -2,17 +2,17 @@
 
 module Komplex
   module Admin
-    class ListingsController < Spree::Admin::ResourceController
-      before_action :load_data, except: [:index, :new, :create]
+    class ListingsController < Komplex::Admin::BaseController
+      before_action :load_data, except: [:index]
 
       def index
         @listings = Komplex::Listing.all
-        
+
         # Apply filters
         @listings = @listings.by_type(params[:type]) if params[:type].present?
         @listings = @listings.by_vendor(params[:vendor_id]) if params[:vendor_id].present?
         @listings = @listings.where(status: params[:status]) if params[:status].present?
-        
+
         # Apply sorting
         case params[:sort]
         when 'newest'
@@ -26,8 +26,8 @@ module Komplex
         else
           @listings = @listings.order(created_at: :desc)
         end
-        
-        @listings = @listings.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+
+        @listings = @listings.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def approve
@@ -74,13 +74,13 @@ module Komplex
 
       def reviews
         @listing = Komplex::Listing.find(params[:id])
-        @reviews = @listing.reviews.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+        @reviews = @listing.reviews.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def convert_to_product
         @listing = Komplex::Listing.find(params[:id])
         product = @listing.to_spree_product
-        
+
         if product.persisted?
           flash[:success] = t('komplex.admin.listings.convert_to_product.success')
           redirect_to edit_admin_product_path(product)

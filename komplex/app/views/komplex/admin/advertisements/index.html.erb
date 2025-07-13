@@ -1,0 +1,68 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.advertisements.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if can?(:create, Komplex::Advertisement) %>
+    <%= link_to Spree.t('komplex.advertisements.new'), new_admin_advertisement_path, class: 'btn btn-primary' %>
+  <% end %>
+<% end %>
+
+<% if @advertisements.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t('komplex.advertisements.title') %></th>
+          <th><%= Spree.t('komplex.advertisements.placement') %></th>
+          <th><%= Spree.t('komplex.advertisements.ad_type') %></th>
+          <th><%= Spree.t('komplex.advertisements.vendor') %></th>
+          <th><%= Spree.t('komplex.advertisements.starts_at') %></th>
+          <th><%= Spree.t('komplex.advertisements.ends_at') %></th>
+          <th><%= Spree.t('komplex.advertisements.status') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @advertisements.each do |advertisement| %>
+          <tr>
+            <td><%= advertisement.title %></td>
+            <td><%= advertisement.placement %></td>
+            <td><%= advertisement.ad_type %></td>
+            <td><%= advertisement.vendor.try(:name) || Spree.t('komplex.advertisements.platform_wide') %></td>
+            <td><%= advertisement.starts_at.to_date %></td>
+            <td><%= advertisement.ends_at.to_date %></td>
+            <td>
+              <% if advertisement.active? %>
+                <span class="badge badge-success"><%= Spree.t('komplex.advertisements.active') %></span>
+              <% elsif advertisement.pending? %>
+                <span class="badge badge-warning"><%= Spree.t('komplex.advertisements.pending') %></span>
+              <% elsif advertisement.rejected? %>
+                <span class="badge badge-danger"><%= Spree.t('komplex.advertisements.rejected') %></span>
+              <% end %>
+            </td>
+            <td class="actions">
+              <% if can?(:edit, advertisement) %>
+                <%= link_to_edit advertisement, no_text: true, class: 'edit' %>
+              <% end %>
+              <% if can?(:destroy, advertisement) %>
+                <%= link_to_delete advertisement, no_text: true %>
+              <% end %>
+              <% if can?(:approve, advertisement) && advertisement.pending? %>
+                <%= link_to Spree.t('komplex.advertisements.approve'), approve_admin_advertisement_path(advertisement), method: :post, class: 'btn btn-success btn-sm' %>
+              <% end %>
+              <% if can?(:reject, advertisement) && advertisement.pending? %>
+                <%= link_to Spree.t('komplex.advertisements.reject'), reject_admin_advertisement_path(advertisement), method: :post, class: 'btn btn-danger btn-sm' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= paginate @advertisements %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('komplex.advertisements.no_advertisements_found') %>
+  </div>
+<% end %>

@@ -539,7 +539,7 @@ The database schema extends the core Spree Commerce tables with new models for p
          before_action :load_data, except: [:index]
 
          def index
-           @listings = Listing.all.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+           @listings = Listing.all.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
          end
 
          # More actions...

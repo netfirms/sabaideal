@@ -50,7 +50,7 @@ group :development, :test do
 
   gem 'brakeman'
   gem 'dotenv-rails', '~> 3.1'
-  gem 'rubocop', '~> 1.23'
+  gem 'rubocop', '~> 1.78'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'selenium-webdriver', '~> 4.10.0'
@@ -125,3 +125,6 @@ gem "spree_stripe", '~> 1.2'
 gem "spree_google_analytics", "~> 1.0"
 gem "spree_klaviyo", "~> 1.0"
 gem "spree_paypal_checkout", "~> 0.5"
+
+# Local komplex module
+gem 'komplex', path: './komplex'

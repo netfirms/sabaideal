@@ -2,18 +2,18 @@
 
 module Komplex
   module Admin
-    class AdvertisementsController < Spree::Admin::ResourceController
+    class AdvertisementsController < Komplex::Admin::BaseController
       before_action :load_data, except: [:index, :destroy]
 
       def index
         @advertisements = Komplex::Advertisement.all
-        
+
         # Apply filters
         @advertisements = @advertisements.by_vendor(params[:vendor_id]) if params[:vendor_id].present?
         @advertisements = @advertisements.by_placement(params[:placement]) if params[:placement].present?
         @advertisements = @advertisements.by_ad_type(params[:ad_type]) if params[:ad_type].present?
         @advertisements = @advertisements.where(status: params[:status]) if params[:status].present?
-        
+
         # Apply date filters
         if params[:current] == 'true'
           @advertisements = @advertisements.active
@@ -22,7 +22,7 @@ module Komplex
         elsif params[:upcoming] == 'true'
           @advertisements = @advertisements.where('starts_at > ?', Time.current)
         end
-        
+
         # Apply sorting
         case params[:sort]
         when 'newest'
@@ -36,8 +36,8 @@ module Komplex
         else
           @advertisements = @advertisements.order(created_at: :desc)
         end
-        
-        @advertisements = @advertisements.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+
+        @advertisements = @advertisements.page(params[:page]).per(Komplex.configuration.admin_products_per_page)
       end
 
       def approve
@@ -70,7 +70,7 @@ module Komplex
 
       def create
         @advertisement = Komplex::Advertisement.new(advertisement_params)
-        
+
         if @advertisement.save
           flash[:success] = t('komplex.admin.advertisements.create.success')
           redirect_to admin_advertisements_path
@@ -87,7 +87,7 @@ module Komplex
 
       def update
         @advertisement = Komplex::Advertisement.find(params[:id])
-        
+
         if @advertisement.update(advertisement_params)
           flash[:success] = t('komplex.admin.advertisements.update.success')
           redirect_to admin_advertisements_path
@@ -100,13 +100,13 @@ module Komplex
 
       def destroy
         @advertisement = Komplex::Advertisement.find(params[:id])
-        
+
         if @advertisement.destroy
           flash[:success] = t('komplex.admin.advertisements.destroy.success')
         else
           flash[:error] = t('komplex.admin.advertisements.destroy.error')
         end
-        
+
         redirect_to admin_advertisements_path
       end
 

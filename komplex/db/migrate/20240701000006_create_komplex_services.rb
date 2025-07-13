@@ -15,6 +15,5 @@ class CreateKomplexServices < ActiveRecord::Migration[7.0]
     end
 
     add_index :komplex_services, :pricing_model
-    add_index :komplex_services, :category_id
   end
 end

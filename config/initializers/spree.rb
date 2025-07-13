@@ -74,7 +74,7 @@ Rails.application.config.after_initialize do
   # Rails.application.config.spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
   # Themes and page builder
-  # Rails.application.config.spree.themes << Spree::Themes::NewShinyTheme
+  Rails.application.config.spree.themes << Spree::Themes::Default
   # Rails.application.config.spree.theme_layout_sections << Spree::PageSections::SuperImportantCeoBio
   # Rails.application.config.spree.page_sections << Spree::PageSections::ContactFormToGetInTouch
   # Rails.application.config.spree.page_blocks << Spree::PageBlocks::BigRedButtonToCallSales
@@ -91,4 +91,5 @@ Spree.screenshot_api_token = ENV['SCREENSHOT_API_TOKEN'] if ENV['SCREENSHOT_API_
 
 Rails.application.config.to_prepare do
   require_dependency 'spree/authentication_helpers'
+  require_dependency 'spree/event'
 end

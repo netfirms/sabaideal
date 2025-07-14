@@ -4,7 +4,7 @@
 
 ### System Overview
 
-Komplex is a modular, multi-vendor marketplace extension for SpreeCommerce that enables the creation and management of various listing types including properties, restaurants, services, promotions, and advertisements. Built as a Rails Engine and Spree extension, Komplex follows the standard Rails MVC (Model-View-Controller) architecture while integrating seamlessly with the Spree Commerce platform.
+Komplex is a modular, multi-merchant marketplace extension for SpreeCommerce that enables the creation and management of various listing types including properties, restaurants, services, and advertisements. Built as a Rails Engine and Spree extension, Komplex follows the standard Rails MVC (Model-View-Controller) architecture while integrating seamlessly with the Spree Commerce platform.
 
 **Core Module Goals:**
 - Enable vendors to register and manage their marketplace presence
@@ -19,47 +19,45 @@ Komplex is a modular, multi-vendor marketplace extension for SpreeCommerce that 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        Komplex Marketplace                           │
-├─────────────┬─────────────┬─────────────────┬──────────────────────┤
-│             │             │                 │                      │
-│  Vendor     │  Listing    │    Promotion    │  Advertisement       │
-│  Management │  Management │    Management   │  Management          │
-│             │             │                 │                      │
-├─────────────┼─────────────┼─────────────────┼──────────────────────┤
-│             │             │                 │                      │
-│  Property   │  Restaurant │  Service        │  Commission &        │
-│  Listings   │  Listings   │  Listings       │  Payout              │
-│             │             │                 │                      │
-├─────────────┴─────────────┴─────────────────┴──────────────────────┤
-│                                                                     │
-│                      Spree Commerce Integration                     │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
-│  │ User &       │  │ Product &    │  │ Order &      │              │
-│  │ Store        │  │ Variant      │  │ Payment      │              │
-│  └──────────────┘  └──────────────┘  └──────────────┘              │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+├─────────────┬─────────────┬──────────────────────────────────────────┤
+│             │             │                                          │
+│  Merchant   │  Listing    │  Advertisement                           │
+│  Management │  Management │  Management                              │
+│             │             │                                          │
+├─────────────┼─────────────┼──────────────────────────────────────────┤
+│             │             │                                          │
+│  Property   │  Restaurant │  Service                                 │
+│  Listings   │  Listings   │  Listings                                │
+│             │             │                                          │
+├─────────────┴─────────────┴──────────────────────────────────────────┤
+│                                                                      │
+│                      Spree Commerce Integration                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │
+│  │ User &       │  │ Product &    │  │ Order &      │               │
+│  │ Store        │  │ Variant      │  │ Payment      │               │
+│  └──────────────┘  └──────────────┘  └──────────────┘               │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ### User Roles and Permissions
 
 1. **Buyer**
    - Browse and search listings
-   - Contact vendors
+   - Contact merchants
    - Make purchases and bookings
    - Submit reviews and ratings
    - View transaction history
 
-2. **Vendor**
+2. **Merchant**
    - Create and manage listings
-   - Manage vendor profile and settings
+   - Manage merchant profile and settings
    - Receive and respond to inquiries
    - View analytics for their listings
-   - Create vendor-specific promotions
    - Purchase advertisement placements
 
 3. **Administrator**
-   - Approve/reject vendors and listings
-   - Manage platform-wide promotions
+   - Approve/reject merchants and listings
    - Configure commission rates
    - Access comprehensive analytics
    - Manage advertisement placements
@@ -70,7 +68,7 @@ Komplex is a modular, multi-vendor marketplace extension for SpreeCommerce that 
 ```
 ┌──────────────┐     ┌───────────────┐     ┌───────────────┐
 │              │     │               │     │               │
-│  Vendor      │────▶│  Listing      │◀────│  Buyer        │
+│  Merchant    │────▶│  Listing      │◀────│  Buyer        │
 │  Registration│     │  Management   │     │  Browsing     │
 │              │     │               │     │               │
 └──────────────┘     └───────┬───────┘     └──────────────┘
@@ -86,7 +84,7 @@ Komplex is a modular, multi-vendor marketplace extension for SpreeCommerce that 
        ▼                     ▼
 ┌──────────────┐     ┌───────────────┐     ┌───────────────┐
 │              │     │               │     │               │
-│  Promotion   │────▶│  Marketplace  │────▶│  Commission   │
+│ Advertisement│────▶│  Marketplace  │────▶│  Commission   │
 │  Management  │     │  Transactions │     │  Processing   │
 │              │     │               │     │               │
 └──────────────┘     └───────────────┘     └───────────────┘
@@ -97,19 +95,19 @@ Komplex is a modular, multi-vendor marketplace extension for SpreeCommerce that 
 Komplex integrates with Spree Commerce by:
 
 1. **Extending Spree Models**
-   - Extending `Spree::User` to support vendor capabilities
+   - Extending `Spree::User` to support merchant capabilities
    - Leveraging `Spree::Product` for listing representation
    - Using `Spree::Order` for marketplace transactions
-   - Extending `Spree::Store` for multi-vendor support
+   - Extending `Spree::Store` for multi-merchant support
 
 2. **Admin Interface Integration**
-   - Adding vendor management to Spree Admin
+   - Adding merchant management to Spree Admin
    - Integrating listing approval workflows
    - Adding commission and payout management
 
 3. **Storefront Integration**
    - Enhancing product pages to display listing details
-   - Adding vendor profile pages
+   - Adding merchant profile pages
    - Implementing search and filtering for listings
 
 ## Low-Level Architecture
@@ -119,7 +117,7 @@ Komplex integrates with Spree Commerce by:
 ```
 ┌───────────────┐       ┌───────────────┐       ┌───────────────┐
 │ spree_users   │       │ komplex_      │       │ komplex_      │
-├───────────────┤       │ vendors       │       │ listings      │
+├───────────────┤       │ merchants     │       │ listings      │
 │ id            │       ├───────────────┤       ├───────────────┤
 │ email         │◀──┐   │ id            │       │ id            │
 │ encrypted_pass│   │   │ user_id       │────┐  │ title         │
@@ -127,7 +125,7 @@ Komplex integrates with Spree Commerce by:
 └───────────────┘   │   │ description   │    │  │ price         │
                     │   │ status        │    │  │ listable_id   │◀──────┐
                     │   │ commission_rate│    │  │ listable_type│       │
-                    │   │ ...           │    │  │ vendor_id     │────┘  │
+                    │   │ ...           │    │  │ merchant_id   │────┘  │
                     │   └───────────────┘    │  │ status        │       │
                     │                        │  │ ...           │       │
                     │                        │  └───────────────┘       │
@@ -138,7 +136,7 @@ Komplex integrates with Spree Commerce by:
                     │   ├───────────────┤    │  ├───────────────┤       │
                     │   │ id            │    │  │ id            │       │
                     └───│ user_id       │    │  │ listing_id    │───────┘
-                        │ vendor_id     │◀───┘  │ property_type │
+                        │ merchant_id   │◀───┘  │ property_type │
                         │ order_id      │       │ bedrooms      │
                         │ amount        │       │ bathrooms     │
                         │ status        │       │ area          │
@@ -146,31 +144,31 @@ Komplex integrates with Spree Commerce by:
                         └───────────────┘       │ ...           │
                                                 └───────────────┘
 
+┌───────────────┐       ┌───────────────┐
+│ komplex_      │       │ komplex_      │
+│ restaurants   │       │ services      │
+├───────────────┤       ├───────────────┤
+│ id            │       │ id            │
+│ listing_id    │───────│ listing_id    │
+│ cuisine_type  │       │ category_id   │
+│ menu_items    │       │ pricing_model │
+│ opening_hours │       │ duration      │
+│ ...           │       │ ...           │
+└───────────────┘       └───────────────┘
+
 ┌───────────────┐       ┌───────────────┐       ┌───────────────┐
 │ komplex_      │       │ komplex_      │       │ komplex_      │
-│ restaurants   │       │ services      │       │ promotions    │
+│ advertisements│       │ reviews       │       │ categories    │
 ├───────────────┤       ├───────────────┤       ├───────────────┤
 │ id            │       │ id            │       │ id            │
-│ listing_id    │───────│ listing_id    │───────│ title         │
-│ cuisine_type  │       │ category_id   │       │ description   │
-│ menu_items    │       │ pricing_model │       │ discount_type │
-│ opening_hours │       │ duration      │       │ discount_amount│
-│ ...           │       │ ...           │       │ starts_at     │
-└───────────────┘       └───────────────┘       │ ends_at       │
-                                                │ vendor_id     │
-┌───────────────┐       ┌───────────────┐       │ ...           │
-│ komplex_      │       │ komplex_      │       └───────────────┘
-│ advertisements│       │ reviews       │
-├───────────────┤       ├───────────────┤       ┌───────────────┐
-│ id            │       │ id            │       │ komplex_      │
-│ title         │       │ listing_id    │       │ categories    │
-│ description   │       │ user_id       │       ├───────────────┤
-│ image         │       │ rating        │       │ id            │
-│ url           │       │ comment       │       │ name          │
-│ starts_at     │       │ status        │       │ description   │
-│ ends_at       │       │ ...           │       │ parent_id     │
-│ vendor_id     │       └───────────────┘       │ ...           │
-│ ...           │                               └───────────────┘
+│ title         │       │ listing_id    │       │ name          │
+│ description   │       │ user_id       │       │ description   │
+│ image         │       │ rating        │       │ parent_id     │
+│ url           │       │ comment       │       │ ...           │
+│ starts_at     │       │ status        │       └───────────────┘
+│ ends_at       │       │ ...           │
+│ merchant_id   │       └───────────────┘
+│ ...           │
 └───────────────┘
 ```
 
@@ -178,9 +176,9 @@ Komplex integrates with Spree Commerce by:
 
 #### Core Tables
 
-1. **komplex_vendors**
+1. **komplex_merchants**
    ```ruby
-   create_table "komplex_vendors", force: :cascade do |t|
+   create_table "komplex_merchants", force: :cascade do |t|
      t.references "user", null: false, foreign_key: { to_table: "spree_users" }
      t.string "name", null: false
      t.text "description"
@@ -189,7 +187,7 @@ Komplex integrates with Spree Commerce by:
      t.jsonb "settings", default: {}
      t.datetime "created_at", null: false
      t.datetime "updated_at", null: false
-     t.index ["status"], name: "index_komplex_vendors_on_status"
+     t.index ["status"], name: "index_komplex_merchants_on_status"
    end
    ```
 
@@ -199,7 +197,7 @@ Komplex integrates with Spree Commerce by:
      t.string "title", null: false
      t.text "description"
      t.decimal "price", precision: 10, scale: 2
-     t.references "vendor", null: false, foreign_key: { to_table: "komplex_vendors" }
+     t.references "merchant", null: false, foreign_key: { to_table: "komplex_merchants" }
      t.references "listable", polymorphic: true, null: false
      t.string "status", default: "draft", null: false  # draft, pending, published, rejected
      t.boolean "featured", default: false
@@ -301,35 +299,14 @@ Komplex integrates with Spree Commerce by:
 
 #### Marketing Tables
 
-1. **komplex_promotions**
-   ```ruby
-   create_table "komplex_promotions", force: :cascade do |t|
-     t.string "title", null: false
-     t.text "description"
-     t.string "promotion_type", null: false  # percentage, fixed_amount
-     t.decimal "discount_amount", precision: 10, scale: 2, null: false
-     t.datetime "starts_at", null: false
-     t.datetime "ends_at", null: false
-     t.references "vendor", foreign_key: { to_table: "komplex_vendors" }
-     t.references "listing", foreign_key: { to_table: "komplex_listings" }
-     t.string "code"
-     t.integer "usage_limit"
-     t.integer "usage_count", default: 0
-     t.datetime "created_at", null: false
-     t.datetime "updated_at", null: false
-     t.index ["code"], name: "index_komplex_promotions_on_code", unique: true
-     t.index ["starts_at", "ends_at"], name: "index_komplex_promotions_on_date_range"
-   end
-   ```
-
-2. **komplex_advertisements**
+1. **komplex_advertisements**
    ```ruby
    create_table "komplex_advertisements", force: :cascade do |t|
      t.string "title", null: false
      t.text "description"
      t.string "placement", null: false  # homepage, search_results, category_page
      t.string "ad_type", null: false    # banner, sidebar, featured
-     t.references "vendor", null: false, foreign_key: { to_table: "komplex_vendors" }
+     t.references "merchant", null: false, foreign_key: { to_table: "komplex_merchants" }
      t.references "listing", foreign_key: { to_table: "komplex_listings" }
      t.datetime "starts_at", null: false
      t.datetime "ends_at", null: false
@@ -349,10 +326,10 @@ Komplex integrates with Spree Commerce by:
 1. **komplex_commissions**
    ```ruby
    create_table "komplex_commissions", force: :cascade do |t|
-     t.references "vendor", null: false, foreign_key: { to_table: "komplex_vendors" }
+     t.references "merchant", null: false, foreign_key: { to_table: "komplex_merchants" }
      t.references "order", null: false, foreign_key: { to_table: "spree_orders" }
      t.references "line_item", foreign_key: { to_table: "spree_line_items" }
-     t.decimal "vendor_amount", precision: 10, scale: 2, null: false
+     t.decimal "merchant_amount", precision: 10, scale: 2, null: false
      t.decimal "commission_amount", precision: 10, scale: 2, null: false
      t.string "status", default: "pending"  # pending, paid, failed
      t.datetime "paid_at"
@@ -365,7 +342,7 @@ Komplex integrates with Spree Commerce by:
 2. **komplex_payouts**
    ```ruby
    create_table "komplex_payouts", force: :cascade do |t|
-     t.references "vendor", null: false, foreign_key: { to_table: "komplex_vendors" }
+     t.references "merchant", null: false, foreign_key: { to_table: "komplex_merchants" }
      t.decimal "amount", precision: 10, scale: 2, null: false
      t.string "status", default: "pending"  # pending, processing, completed, failed
      t.string "transaction_id"
@@ -462,16 +439,8 @@ Komplex integrates with Spree Commerce by:
    GET    /api/v2/platform/komplex/services/:id           # Get a specific service
    ```
 
-6. **Promotions API**
-   ```
-   GET    /api/v2/platform/komplex/promotions             # List all promotions
-   GET    /api/v2/platform/komplex/promotions/:id         # Get a specific promotion
-   POST   /api/v2/platform/komplex/promotions             # Create a new promotion
-   PUT    /api/v2/platform/komplex/promotions/:id         # Update a promotion
-   DELETE /api/v2/platform/komplex/promotions/:id         # Delete a promotion
-   ```
 
-7. **Advertisements API**
+6. **Advertisements API**
    ```
    GET    /api/v2/platform/komplex/advertisements         # List all advertisements
    GET    /api/v2/platform/komplex/advertisements/:id     # Get a specific advertisement
@@ -480,14 +449,14 @@ Komplex integrates with Spree Commerce by:
    DELETE /api/v2/platform/komplex/advertisements/:id     # Delete an advertisement
    ```
 
-8. **Commissions API**
+7. **Commissions API**
    ```
    GET    /api/v2/platform/komplex/commissions            # List all commissions
    GET    /api/v2/platform/komplex/commissions/:id        # Get a specific commission
    PUT    /api/v2/platform/komplex/commissions/:id/pay    # Mark a commission as paid
    ```
 
-9. **Payouts API**
+8. **Payouts API**
    ```
    GET    /api/v2/platform/komplex/payouts                # List all payouts
    GET    /api/v2/platform/komplex/payouts/:id            # Get a specific payout
@@ -495,7 +464,7 @@ Komplex integrates with Spree Commerce by:
    PUT    /api/v2/platform/komplex/payouts/:id            # Update a payout
    ```
 
-10. **Reviews API**
+9. **Reviews API**
     ```
     GET    /api/v2/platform/komplex/reviews               # List all reviews
     GET    /api/v2/platform/komplex/reviews/:id           # Get a specific review
@@ -505,7 +474,7 @@ Komplex integrates with Spree Commerce by:
     PUT    /api/v2/platform/komplex/reviews/:id/approve   # Approve a review
     ```
 
-11. **Search API**
+10. **Search API**
     ```
     GET    /api/v2/platform/komplex/search                # Search listings with advanced filtering
     ```
@@ -687,7 +656,7 @@ komplex/
        def perform(resource_type, resource_id, status)
          resource_class = resource_type.constantize
          resource = resource_class.find(resource_id)
-         
+
          case resource_type
          when 'Komplex::Vendor'
            Komplex::VendorMailer.status_update(resource, status).deliver_now
@@ -781,7 +750,7 @@ komplex/
 
 1. Set up the Rails Engine structure
 2. Create database migrations for core tables
-3. Implement core models (Vendor, Listing, Category)
+3. Implement core models (Merchant, Listing, Category)
 4. Set up Spree model extensions
 5. Implement basic API endpoints
 
@@ -793,20 +762,19 @@ komplex/
 4. Create search and filtering functionality
 5. Implement listing approval workflow
 
-### Phase 3: Vendor Management
+### Phase 3: Merchant Management
 
-1. Implement vendor registration and onboarding
-2. Create vendor dashboard
-3. Implement vendor approval workflow
+1. Implement merchant registration and onboarding
+2. Create merchant dashboard
+3. Implement merchant approval workflow
 4. Set up commission and payout system
-5. Create vendor analytics
+5. Create merchant analytics
 
 ### Phase 4: Marketing Features
 
-1. Implement Promotions
-2. Implement Advertisements
-3. Create campaign management
-4. Set up notification system
+1. Implement Advertisements
+2. Create campaign management
+3. Set up notification system
 
 ### Phase 5: Integration and Testing
 
@@ -867,7 +835,7 @@ The Komplex module is designed to be extensible in several ways:
 
 3. **Integration Points**
    - Well-defined hooks for extending functionality
-   - Event system for reacting to changes in listings, vendors, etc.
+   - Event system for reacting to changes in listings, merchants, etc.
 
 4. **Localization**
    - All user-facing text is stored in locale files
@@ -875,6 +843,6 @@ The Komplex module is designed to be extensible in several ways:
 
 ## Conclusion
 
-The Komplex module provides a comprehensive solution for creating a multi-vendor marketplace on top of SpreeCommerce. By leveraging Spree's existing e-commerce capabilities and extending them with marketplace features, Komplex enables businesses to quickly launch and scale their marketplace platforms.
+The Komplex module provides a comprehensive solution for creating a multi-merchant marketplace on top of SpreeCommerce. By leveraging Spree's existing e-commerce capabilities and extending them with marketplace features, Komplex enables businesses to quickly launch and scale their marketplace platforms.
 
 The modular design allows for easy customization and extension, making it suitable for a wide range of marketplace types, from property and restaurant listings to service marketplaces and beyond.

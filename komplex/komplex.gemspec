@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email       = ['info@komplex.io']
   spec.homepage    = 'https://github.com/komplex/komplex'
   spec.summary     = 'Multi-vendor marketplace extension for SpreeCommerce'
-  spec.description = 'Komplex is a modular, multi-vendor marketplace extension for SpreeCommerce that enables the creation and management of various listing types including properties, restaurants, services, promotions, and advertisements.'
+  spec.description = 'Komplex is a modular, multi-merchant marketplace extension for SpreeCommerce that enables the creation and management of various listing types including properties, restaurants, services, and advertisements. Built as a Rails Engine and Spree extension, Komplex follows the standard Rails MVC architecture while integrating seamlessly with the Spree Commerce platform.'
   spec.license     = 'MIT'
 
   spec.metadata['homepage_uri'] = spec.homepage

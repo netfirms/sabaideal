@@ -51,15 +51,14 @@ The following implementation artifacts have been created:
 
 ## Features
 
-The Komplex module supports the following features as specified in the issue description:
+The Komplex module supports the following features:
 
 ### Resource Types
 
 - **Property Listings** - For rent and sale, supporting metric units (e.g., square meters)
 - **Restaurant Listings** - With menus, location, photos, and operational details
-- **Promotions** - Vendor-level and platform-wide promotions
-- **Advertisements** - Paid vendor ads and campaign placements
 - **Service Listings** - Support for existing and future service categories with minimal changes
+- **Advertisements** - Paid vendor ads and campaign placements
 
 ### Multi-Vendor Capabilities
 

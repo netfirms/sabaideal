@@ -1,0 +1,63 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.vendors.payouts_for', name: @vendor.name) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.vendors.back_to_vendor'), admin_vendor_path(@vendor), class: 'btn btn-primary' %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.vendors.create_payout') %>
+  </div>
+  <div class="card-body">
+    <%= form_tag create_payout_admin_vendor_path(@vendor), method: :post, class: 'form-inline' do %>
+      <div class="form-group mr-2">
+        <%= label_tag :amount, Spree.t('komplex.payouts.amount'), class: 'mr-2' %>
+        <%= text_field_tag :amount, nil, class: 'form-control', placeholder: Spree.t('komplex.payouts.amount_placeholder') %>
+      </div>
+      <div class="form-group mr-2">
+        <%= label_tag :notes, Spree.t('komplex.payouts.notes'), class: 'mr-2' %>
+        <%= text_field_tag :notes, nil, class: 'form-control', placeholder: Spree.t('komplex.payouts.notes_placeholder') %>
+      </div>
+      <%= submit_tag Spree.t('komplex.payouts.create'), class: 'btn btn-success' %>
+    <% end %>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <%= Spree.t('komplex.vendors.payout_history') %>
+  </div>
+  <div class="card-body">
+    <% if @payouts.any? %>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= Spree.t('komplex.payouts.amount') %></th>
+              <th><%= Spree.t('komplex.payouts.status') %></th>
+              <th><%= Spree.t('komplex.payouts.notes') %></th>
+              <th><%= Spree.t('komplex.payouts.created_at') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @payouts.each do |payout| %>
+              <tr>
+                <td><%= payout.display_amount %></td>
+                <td><span class="badge badge-<%= payout.paid? ? 'success' : 'warning' %>"><%= payout.status %></span></td>
+                <td><%= payout.notes %></td>
+                <td><%= payout.created_at.to_date %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <%= paginate @payouts %>
+    <% else %>
+      <div class="alert alert-info no-objects-found">
+        <%= Spree.t('komplex.payouts.no_payouts_found') %>
+      </div>
+    <% end %>
+  </div>
+</div>

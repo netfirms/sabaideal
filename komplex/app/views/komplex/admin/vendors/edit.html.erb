@@ -5,6 +5,6 @@
 <%= form_for [:admin, @vendor] do |f| %>
   <fieldset>
     <%= render partial: 'form', locals: { f: f } %>
-    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { f: f, collection_url: admin_vendors_path, resource_url: admin_vendor_path(@vendor) } %>
   </fieldset>
 <% end %>

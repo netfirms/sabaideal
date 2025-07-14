@@ -3,7 +3,16 @@
 Komplex::Engine.routes.draw do
   # Admin routes
   namespace :admin do
-    resources :vendors
+    resources :vendors do
+      member do
+        post :approve
+        post :reject
+        get :listings
+        get :commissions
+        get :payouts
+        post :create_payout
+      end
+    end
     resources :listings
     resources :promotions
     resources :advertisements

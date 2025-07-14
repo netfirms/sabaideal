@@ -1,0 +1,37 @@
+<% if spree_current_user %>
+  <li class="dropdown user-menu">
+    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+      <i class="icon icon-user"></i>
+      <span class="text">
+        <%= spree_current_user.email %>
+      </span>
+      <i class="caret"></i>
+    </a>
+
+    <ul class="dropdown-menu">
+      <% if spree.respond_to? :root_path %>
+        <li>
+          <%= link_to spree.root_path, target: :blank do %>
+            <i class="icon icon-external-link"></i>
+            <%= Spree.t(:back_to_store) %>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% if can?(:manage, spree_current_user) %>
+        <li>
+          <%= link_to_with_icon 'user-scan', spree.edit_admin_profile_path, { class: 'dropdown-item', title: Spree.t('admin.edit_profile') } %>
+        </li>
+      <% end %>
+
+      <% if spree.respond_to? :admin_logout_path %>
+        <li>
+          <%= link_to spree.admin_logout_path do %>
+            <i class="icon icon-signout"></i>
+            <%= Spree.t(:logout) %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </li>
+<% end %>

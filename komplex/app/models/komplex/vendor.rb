@@ -10,6 +10,8 @@ module Komplex
     has_many :payouts, dependent: :nullify
     has_many :conversations, dependent: :destroy
 
+    delegate :email, to: :user, allow_nil: true
+
     validates :name, presence: true, uniqueness: true
     validates :commission_rate, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }
 

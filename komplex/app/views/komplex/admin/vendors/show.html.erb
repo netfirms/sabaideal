@@ -69,7 +69,7 @@
       <div class="col-12 col-md-6">
         <div class="form-group">
           <label><%= Spree.t('komplex.vendors.created_at') %></label>
-          <p><%= @vendor.created_at.to_s(:long) %></p>
+          <p><%= @vendor.created_at.strftime('%B %d, %Y %H:%M') %></p>
         </div>
       </div>
     </div>

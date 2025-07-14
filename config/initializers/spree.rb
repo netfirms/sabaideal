@@ -89,7 +89,43 @@ Spree.user_class = 'Spree::User'
 Spree.google_places_api_key = ENV['GOOGLE_PLACES_API_KEY'] if ENV['GOOGLE_PLACES_API_KEY'].present?
 Spree.screenshot_api_token = ENV['SCREENSHOT_API_TOKEN'] if ENV['SCREENSHOT_API_TOKEN'].present?
 
+# Define admin_new_items_dropdown_items method for admin dropdown menu
 Rails.application.config.to_prepare do
   require_dependency 'spree/authentication_helpers'
   require_dependency 'spree/event'
+
+  module Spree
+    def self.admin_new_items_dropdown_items
+      [
+        {
+          label: Spree.t(:product),
+          icon: 'box',
+          url: '/admin/products/new',
+          ability: :create,
+          resource: Spree::Product
+        },
+        {
+          label: Spree.t(:category),
+          icon: 'list',
+          url: '/admin/taxons/new',
+          ability: :create,
+          resource: Spree::Taxon
+        },
+        {
+          label: Spree.t(:order),
+          icon: 'shopping-cart',
+          url: '/admin/orders/new',
+          ability: :create,
+          resource: Spree::Order
+        },
+        {
+          label: Spree.t('komplex.vendors.new'),
+          icon: 'store',
+          url: '/admin/vendors/new',
+          ability: :create,
+          resource: Komplex::Vendor
+        }
+      ]
+    end
+  end
 end

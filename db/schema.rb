@@ -1772,10 +1772,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
     t.text "storefront_custom_code_head"
     t.text "storefront_custom_code_body_start"
     t.text "storefront_custom_code_body_end"
+    t.bigint "vendor_id"
     t.index ["code"], name: "index_spree_stores_on_code", unique: true
     t.index ["default"], name: "index_spree_stores_on_default"
     t.index ["deleted_at"], name: "index_spree_stores_on_deleted_at"
     t.index ["url"], name: "index_spree_stores_on_url"
+    t.index ["vendor_id"], name: "index_spree_stores_on_vendor_id"
   end
 
   create_table "spree_stripe_payment_intents", force: :cascade do |t|
@@ -2164,6 +2166,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
   add_foreign_key "spree_product_translations", "spree_products"
   add_foreign_key "spree_property_translations", "spree_properties"
   add_foreign_key "spree_store_translations", "spree_stores"
+  add_foreign_key "spree_stores", "komplex_vendors", column: "vendor_id"
   add_foreign_key "spree_taxon_translations", "spree_taxons"
   add_foreign_key "spree_taxonomy_translations", "spree_taxonomies"
 end

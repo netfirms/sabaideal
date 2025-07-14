@@ -1,0 +1,43 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.vendors.commissions_for', name: @vendor.name) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.vendors.back_to_vendor'), admin_vendor_path(@vendor), class: 'btn btn-primary' %>
+<% end %>
+
+<% if @commissions.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t('komplex.commissions.order_number') %></th>
+          <th><%= Spree.t('komplex.commissions.amount') %></th>
+          <th><%= Spree.t('komplex.commissions.status') %></th>
+          <th><%= Spree.t('komplex.commissions.created_at') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @commissions.each do |commission| %>
+          <tr>
+            <td><%= commission.order&.number %></td>
+            <td><%= commission.display_amount %></td>
+            <td><span class="badge badge-<%= commission.paid? ? 'success' : 'warning' %>"><%= commission.status %></span></td>
+            <td><%= commission.created_at.to_date %></td>
+            <td class="actions">
+              <% if can?(:show, commission) %>
+                <%= link_to Spree.t('komplex.commissions.view'), admin_order_path(commission.order), class: 'btn btn-info btn-sm' if commission.order %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= paginate @commissions %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('komplex.commissions.no_commissions_found') %>
+  </div>
+<% end %>

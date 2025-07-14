@@ -13,8 +13,34 @@ module Komplex
         @vendor = Komplex::Vendor.new
       end
 
+      def create
+        @vendor = Komplex::Vendor.new(permitted_resource_params)
+
+        if @vendor.save
+          flash[:success] = t('komplex.admin.vendors.create.success')
+          redirect_to admin_vendors_path
+        else
+          flash.now[:error] = t('komplex.admin.vendors.create.error')
+          load_data
+          render :new
+        end
+      end
+
       def edit
         @vendor = Komplex::Vendor.find(params[:id])
+      end
+
+      def update
+        @vendor = Komplex::Vendor.find(params[:id])
+
+        if @vendor.update(permitted_resource_params)
+          flash[:success] = t('komplex.admin.vendors.update.success')
+          redirect_to admin_vendors_path
+        else
+          flash.now[:error] = t('komplex.admin.vendors.update.error')
+          load_data
+          render :edit
+        end
       end
 
       def show
@@ -88,6 +114,12 @@ module Komplex
 
       def model_class
         Komplex::Vendor
+      end
+
+      def permitted_resource_params
+        params.require(:vendor).permit(
+          :user_id, :name, :description, :status, :commission_rate, settings: {}
+        )
       end
     end
   end

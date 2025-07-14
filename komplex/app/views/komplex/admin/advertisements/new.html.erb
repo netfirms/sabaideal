@@ -5,6 +5,6 @@
 <%= form_for [:admin, @advertisement], html: { multipart: true } do |f| %>
   <fieldset>
     <%= render partial: 'form', locals: { f: f } %>
-    <%= render partial: 'spree/admin/shared/new_resource_links' %>
+    <%= render partial: 'spree/admin/shared/new_resource_links', locals: { collection_url: admin_advertisements_path } %>
   </fieldset>
 <% end %>

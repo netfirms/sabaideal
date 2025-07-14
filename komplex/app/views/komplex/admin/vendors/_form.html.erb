@@ -34,4 +34,14 @@
       <% end %>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-12">
+      <%= f.field_container :description, class: ['form-group'] do %>
+        <%= f.label :description, Spree.t('komplex.vendors.description') %>
+        <%= f.text_area :description, class: 'form-control', rows: 4 %>
+        <%= f.error_message_on :description %>
+      <% end %>
+    </div>
+  </div>
 </div>

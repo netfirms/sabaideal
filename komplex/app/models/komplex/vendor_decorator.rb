@@ -5,7 +5,7 @@ module Komplex
     def self.prepended(base)
       base.has_one :store, class_name: 'Spree::Store', dependent: :nullify
       base.after_create :create_store
-      base.after_update :update_store, if: :saved_change_to_name?
+      base.after_update :update_store, if: -> { saved_change_to_name? || saved_change_to_description? }
     end
 
     def ensure_store_exists
@@ -43,11 +43,16 @@ module Komplex
 
     def generate_store_url
       # Create a URL-friendly version of the vendor name
-      base_url = name.parameterize
-      
+      # Handle nil or empty name gracefully
+      base_url = if name.present?
+                   name.parameterize
+                 else
+                   "vendor-#{id || Time.current.to_i}"
+                 end
+
       # Check if the URL already exists
       existing_urls = Spree::Store.where.not(id: store&.id).pluck(:url)
-      
+
       if existing_urls.include?(base_url)
         # Append a number to make it unique
         counter = 1
@@ -62,8 +67,11 @@ module Komplex
 
     def generate_meta_keywords
       # Generate meta keywords based on vendor name and description
-      keywords = [name]
-      
+      keywords = []
+
+      # Add name to keywords if present
+      keywords << name if name.present?
+
       # Add some keywords based on the description
       if description.present?
         # Extract potential keywords from description
@@ -73,8 +81,9 @@ module Komplex
         # Take up to 5 keywords from description
         keywords += filtered_words.first(5)
       end
-      
-      keywords.join(', ')
+
+      # Return default keyword if no keywords were generated
+      keywords.present? ? keywords.join(', ') : 'vendor'
     end
 
     def common_words

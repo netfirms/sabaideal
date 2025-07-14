@@ -2,7 +2,7 @@
 
 ## Issue with bin/setup
 
-When running `bin/setup`, you might encounter errors related to Ruby version compatibility. The project now requires Ruby 3.3.8 with Rails 6.1.0.
+When running `bin/setup`, you might encounter errors related to Ruby version compatibility. The project now requires Ruby 3.3.8 with Rails 8.0.2.
 
 ## Solution
 

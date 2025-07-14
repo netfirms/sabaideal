@@ -61,6 +61,7 @@ module Komplex
       
       # Send failure notification to vendor and admin
       PayoutMailer.failure_notification(payout).deliver_later
+      PayoutMailer.admin_failure_notification(payout).deliver_later
     end
   end
 end

@@ -9,6 +9,7 @@ class CreateKomplexVendors < ActiveRecord::Migration[7.0]
       t.string :status, default: 'pending', null: false
       t.decimal :commission_rate, precision: 5, scale: 2, default: 0.0
       t.jsonb :settings, default: {}
+      t.text :rejection_reason
 
       t.timestamps
     end

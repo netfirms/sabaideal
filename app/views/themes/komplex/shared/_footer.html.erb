@@ -1,0 +1,52 @@
+<footer class="bg-dark text-white py-4 mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h5><%= current_store.name %></h5>
+        <p>Your one-stop marketplace for all your needs.</p>
+        <p>
+          <i class="fas fa-envelope me-2"></i> contact@example.com<br>
+          <i class="fas fa-phone me-2"></i> (123) 456-7890
+        </p>
+      </div>
+      <div class="col-md-2">
+        <h5>Shop</h5>
+        <ul class="list-unstyled">
+          <li><%= link_to 'Products', spree.products_path, class: 'text-white' %></li>
+          <li><%= link_to 'Categories', spree.nested_taxons_path, class: 'text-white' %></li>
+          <li><%= link_to 'Marketplace', main_app.listings_path, class: 'text-white' %></li>
+        </ul>
+      </div>
+      <div class="col-md-2">
+        <h5>Account</h5>
+        <ul class="list-unstyled">
+          <li><%= link_to 'My Account', spree.account_path, class: 'text-white' %></li>
+          <li><%= link_to 'Orders', spree.orders_path, class: 'text-white' %></li>
+          <li><%= link_to 'Wishlist', '#', class: 'text-white' %></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h5>Newsletter</h5>
+        <p>Subscribe to our newsletter for updates and promotions.</p>
+        <form>
+          <div class="input-group mb-3">
+            <input type="email" class="form-control" placeholder="Your email" aria-label="Your email">
+            <button class="btn btn-primary" type="submit">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="row">
+      <div class="col-md-6">
+        <p class="mb-0">&copy; <%= Time.current.year %> <%= current_store.name %>. All rights reserved.</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>

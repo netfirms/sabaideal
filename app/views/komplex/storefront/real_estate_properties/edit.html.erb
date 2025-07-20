@@ -1,0 +1,91 @@
+<% content_for :title do %>
+  Edit Property | <%= current_store.name %>
+<% end %>
+
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to 'Home', root_path %></li>
+      <li class="breadcrumb-item"><%= link_to 'Real Estate Properties', real_estate_properties_path %></li>
+      <li class="breadcrumb-item"><%= link_to @property.listing&.title || 'Property Details', real_estate_property_path(@property) %></li>
+      <li class="breadcrumb-item active" aria-current="page">Edit Property</li>
+    </ol>
+  </nav>
+
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1>Edit Property</h1>
+      <p class="text-muted">Update your property listing information</p>
+    </div>
+    <div class="col-md-4 text-right">
+      <%= link_to 'View Property', real_estate_property_path(@property), class: 'btn btn-outline-primary' %>
+      <%= link_to 'Back to My Properties', my_real_estate_properties_path, class: 'btn btn-outline-secondary ml-2' %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <%= render 'form' %>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Listing Status</h5>
+        </div>
+        <div class="card-body">
+          <% if @property.listing %>
+            <div class="mb-3">
+              <strong>Current Status:</strong>
+              <% case @property.listing.status %>
+              <% when 'draft' %>
+                <span class="badge badge-secondary">Draft</span>
+                <p class="mt-2 small text-muted">Your listing is saved but not submitted for review.</p>
+              <% when 'pending' %>
+                <span class="badge badge-warning">Pending Approval</span>
+                <p class="mt-2 small text-muted">Your listing is awaiting review by our team.</p>
+              <% when 'published' %>
+                <span class="badge badge-success">Published</span>
+                <p class="mt-2 small text-muted">Your listing is live and visible to all users.</p>
+              <% when 'rejected' %>
+                <span class="badge badge-danger">Rejected</span>
+                <p class="mt-2 small text-muted">Your listing was not approved. Please update and resubmit.</p>
+              <% end %>
+            </div>
+            
+            <div class="mb-3">
+              <strong>Created:</strong> <%= @property.listing.created_at.strftime('%B %d, %Y') %>
+            </div>
+            
+            <% if @property.listing.published? %>
+              <div class="mb-3">
+                <strong>Published:</strong> <%= @property.listing.published_at&.strftime('%B %d, %Y') || 'N/A' %>
+              </div>
+            <% end %>
+            
+            <hr>
+            
+            <div class="alert alert-info">
+              <p class="mb-0"><i class="fas fa-info-circle mr-2"></i> Editing your listing will require re-approval before it becomes visible again.</p>
+            </div>
+          <% else %>
+            <div class="alert alert-warning">
+              <p class="mb-0"><i class="fas fa-exclamation-triangle mr-2"></i> This property doesn't have an associated listing yet.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Need Help?</h5>
+        </div>
+        <div class="card-body">
+          <p>If you have any questions or need assistance with your listing, our support team is here to help.</p>
+          <p><i class="fas fa-envelope mr-2"></i> <a href="mailto:support@example.com">support@example.com</a></p>
+          <p class="mb-0"><i class="fas fa-phone mr-2"></i> (123) 456-7890</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

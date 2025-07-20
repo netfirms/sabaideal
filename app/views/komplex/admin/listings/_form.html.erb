@@ -1,0 +1,65 @@
+<div class="row">
+  <div class="col-12">
+    <%= form_with(url: @listing.new_record? ? spree.admin_listings_path : spree.admin_listing_path(@listing), method: @listing.new_record? ? :post : :patch, local: true, scope: :listing) do |f| %>
+      <div class="form-group">
+        <%= f.label :title %>
+        <%= f.text_field :title, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :description %>
+        <%= f.text_area :description, class: 'form-control', rows: 5 %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :price %>
+        <%= f.number_field :price, class: 'form-control', step: '0.01' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :merchant_id %>
+        <%= f.collection_select :merchant_id, Spree::Merchant.all, :id, :name, {}, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :status %>
+        <%= f.select :status, [['Draft', 'draft'], ['Pending', 'pending'], ['Published', 'published'], ['Rejected', 'rejected']], {}, class: 'form-control' %>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= f.check_box :featured, class: 'form-check-input' %>
+        <%= f.label :featured, class: 'form-check-label' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :condition %>
+        <%= f.select :condition, [['New', 'new'], ['Used', 'used'], ['Like New', 'like_new'], ['Good', 'good'], ['Fair', 'fair']], {}, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :category %>
+        <%= f.select :category, [['Property', 'property'], ['Restaurant', 'restaurant'], ['Service', 'service'], ['Other', 'other']], {}, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :listable_type, "Listing Type" %>
+        <%= f.select :listable_type, [
+          ['Real Estate Property', 'Komplex::RealEstateProperty'],
+          ['Restaurant', 'Komplex::Restaurant'],
+          ['Service', 'Komplex::Service']
+        ], { include_blank: 'Select a listing type' }, { class: 'form-control', required: true } %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :listable_id, "Listing ID" %>
+        <%= f.number_field :listable_id, class: 'form-control', required: true %>
+        <small class="form-text text-muted">Enter the ID of the existing Property, Restaurant, or Service based on the selected type above.</small>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit class: 'btn btn-primary' %>
+        <%= link_to 'Cancel', spree.admin_listings_path, class: 'btn btn-secondary' %>
+      </div>
+    <% end %>
+  </div>
+</div>

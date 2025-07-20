@@ -1,0 +1,16 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.advertisements.edit.title') %>: <%= @advertisement.title %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.advertisements.back_to_advertisements'), spree.admin_advertisements_path, class: 'btn btn-primary' %>
+  <%= link_to Spree.t('komplex.advertisements.show'), spree.admin_advertisement_path(@advertisement), class: 'btn btn-primary' %>
+<% end %>
+
+<%= form_for [:admin, @advertisement], url: spree.admin_advertisement_path(@advertisement) do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+
+  <div class="form-actions">
+    <%= f.submit Spree.t('komplex.advertisements.update'), class: 'btn btn-primary' %>
+  </div>
+<% end %>

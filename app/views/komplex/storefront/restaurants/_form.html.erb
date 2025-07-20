@@ -1,0 +1,118 @@
+<%= form_with(model: @restaurant, url: @restaurant.new_record? ? restaurants_path : restaurant_path(@restaurant), method: @restaurant.new_record? ? :post : :patch, local: true, scope: :restaurant) do |f| %>
+  <% if @restaurant.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(@restaurant.errors.count, "error") %> prohibited this restaurant from being saved:</h4>
+      <ul>
+        <% @restaurant.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset class="mb-4">
+    <legend>Listing Information</legend>
+    <%= f.fields_for :listing do |listing_form| %>
+      <div class="form-group mb-3">
+        <%= listing_form.label :title %>
+        <%= listing_form.text_field :title, class: 'form-control' %>
+      </div>
+
+      <div class="form-group mb-3">
+        <%= listing_form.label :description %>
+        <%= listing_form.text_area :description, class: 'form-control', rows: 5 %>
+      </div>
+
+      <div class="form-group mb-3">
+        <%= listing_form.label :price %>
+        <%= listing_form.number_field :price, class: 'form-control', step: 'any' %>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= listing_form.check_box :featured, class: 'form-check-input' %>
+        <%= listing_form.label :featured, class: 'form-check-label' %>
+      </div>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="mb-4">
+    <legend>Restaurant Information</legend>
+    <div class="form-group mb-3">
+      <%= f.label :cuisine_type %>
+      <%= f.text_field :cuisine_type, class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :address %>
+      <%= f.text_field :address, class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :city %>
+      <%= f.text_field :city, class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :state %>
+      <%= f.text_field :state, class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :postal_code %>
+      <%= f.text_field :postal_code, class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :country %>
+      <%= f.text_field :country, class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :latitude %>
+      <%= f.number_field :latitude, class: 'form-control', step: 'any' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :longitude %>
+      <%= f.number_field :longitude, class: 'form-control', step: 'any' %>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-4">
+    <legend>Restaurant Options</legend>
+    <div class="form-check mb-3">
+      <%= f.check_box :delivery_available, class: 'form-check-input' %>
+      <%= f.label :delivery_available, class: 'form-check-label' %>
+    </div>
+
+    <div class="form-check mb-3">
+      <%= f.check_box :takeout_available, class: 'form-check-input' %>
+      <%= f.label :takeout_available, class: 'form-check-label' %>
+    </div>
+
+    <div class="form-check mb-3">
+      <%= f.check_box :reservation_required, class: 'form-check-input' %>
+      <%= f.label :reservation_required, class: 'form-check-label' %>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-4">
+    <legend>Menu & Hours</legend>
+    <div class="form-group mb-3">
+      <%= f.label :menu_items, "Menu Items (JSON)" %>
+      <%= f.text_area :menu_items, class: 'form-control', rows: 5 %>
+      <small class="form-text text-muted">Enter menu items in JSON format. Example: [{"name": "Pizza", "price": 10.99, "description": "Delicious pizza"}]</small>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :opening_hours, "Opening Hours (JSON)" %>
+      <%= f.text_area :opening_hours, class: 'form-control', rows: 5 %>
+      <small class="form-text text-muted">Enter opening hours in JSON format. Example: {"monday": "9:00-17:00", "tuesday": "9:00-17:00"}</small>
+    </div>
+  </fieldset>
+
+  <div class="form-actions mt-4">
+    <%= f.submit "Create Restaurant", class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', restaurants_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>

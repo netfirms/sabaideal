@@ -1,0 +1,17 @@
+<dl class="row">
+  <% if service.category.present? %>
+    <dt class="col-sm-4">Category:</dt>
+    <dd class="col-sm-8"><%= service.category.name %></dd>
+  <% end %>
+
+  <% if service.duration.present? %>
+    <dt class="col-sm-4">Duration:</dt>
+    <dd class="col-sm-8"><%= service.duration %> minutes</dd>
+  <% end %>
+
+  <% if service.service_area.present? %>
+    <dt class="col-sm-4">Location:</dt>
+    <dd class="col-sm-8"><%= service.service_area %></dd>
+  <% end %>
+
+</dl>

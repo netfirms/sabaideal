@@ -1,0 +1,227 @@
+<% content_for :title do %>
+  Real Estate Properties | <%= current_store.name %>
+<% end %>
+
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to 'Home', root_path %></li>
+      <li class="breadcrumb-item active" aria-current="page">Real Estate Properties</li>
+    </ol>
+  </nav>
+
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1>Real Estate Properties</h1>
+      <p class="text-muted">Find your perfect property</p>
+    </div>
+    <% if current_merchant %>
+      <div class="col-md-4 text-right">
+        <%= link_to 'Add New Property', new_real_estate_property_path, class: 'btn btn-primary' %>
+        <%= link_to 'My Properties', my_real_estate_properties_path, class: 'btn btn-outline-secondary ml-2' %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <!-- Filters Sidebar -->
+    <div class="col-md-3">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Filter Properties</h5>
+        </div>
+        <div class="card-body">
+          <%= form_with url: real_estate_properties_path, method: :get, local: true do |f| %>
+            <div class="form-group">
+              <%= f.label :search, 'Search' %>
+              <%= f.text_field :search, value: params[:search], class: 'form-control', placeholder: 'Search properties...' %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :property_type, 'Property Type' %>
+              <%= f.select :property_type, 
+                  [['All Types', ''], ['House', 'house'], ['Apartment', 'apartment'], ['Condo', 'condo'], 
+                   ['Land', 'land'], ['Commercial', 'commercial']], 
+                  { selected: params[:property_type] }, 
+                  { class: 'form-control' } %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :listing_type, 'Listing Type' %>
+              <%= f.select :listing_type, 
+                  [['All', ''], ['For Sale', 'sale'], ['For Rent', 'rent']], 
+                  { selected: params[:listing_type] }, 
+                  { class: 'form-control' } %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :bedrooms, 'Bedrooms' %>
+              <%= f.select :bedrooms, 
+                  [['Any', ''], ['1+', '1'], ['2+', '2'], ['3+', '3'], ['4+', '4'], ['5+', '5']], 
+                  { selected: params[:bedrooms] }, 
+                  { class: 'form-control' } %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :bathrooms, 'Bathrooms' %>
+              <%= f.select :bathrooms, 
+                  [['Any', ''], ['1+', '1'], ['2+', '2'], ['3+', '3'], ['4+', '4']], 
+                  { selected: params[:bathrooms] }, 
+                  { class: 'form-control' } %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :min_price, 'Min Price' %>
+              <%= f.number_field :min_price, value: params[:min_price], class: 'form-control', placeholder: 'Min Price' %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :max_price, 'Max Price' %>
+              <%= f.number_field :max_price, value: params[:max_price], class: 'form-control', placeholder: 'Max Price' %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :city, 'City' %>
+              <%= f.text_field :city, value: params[:city], class: 'form-control', placeholder: 'City' %>
+            </div>
+
+            <div class="form-group">
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :furnished, { checked: params[:furnished] == 'true', class: 'custom-control-input' }, 'true', nil %>
+                <%= f.label :furnished, 'Furnished', class: 'custom-control-label' %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :sort, 'Sort By' %>
+              <%= f.select :sort, 
+                  [['Newest', 'newest'], ['Price (Low to High)', 'price_asc'], ['Price (High to Low)', 'price_desc'],
+                   ['Bedrooms (Low to High)', 'bedrooms_asc'], ['Bedrooms (High to Low)', 'bedrooms_desc'],
+                   ['Area (Low to High)', 'area_asc'], ['Area (High to Low)', 'area_desc']], 
+                  { selected: params[:sort] || 'newest' }, 
+                  { class: 'form-control' } %>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+            <%= link_to 'Clear Filters', real_estate_properties_path, class: 'btn btn-outline-secondary btn-block mt-2' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Listings -->
+    <div class="col-md-9">
+      <% if @properties.any? %>
+        <div class="row">
+          <% @properties.each do |property| %>
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card h-100 property-card">
+                <% if property.listing&.featured? %>
+                  <div class="featured-badge">
+                    <span class="badge badge-warning">Featured</span>
+                  </div>
+                <% end %>
+                
+                <div class="property-image">
+                  <%= link_to real_estate_property_path(property) do %>
+                    <% if property.listing&.images&.attached? && property.listing.images.first.present? %>
+                      <%= image_tag property.listing.images.first, class: 'card-img-top', alt: property.listing.title %>
+                    <% else %>
+                      <%= image_tag 'noimage/property.png', class: 'card-img-top', alt: 'No image available' %>
+                    <% end %>
+                  <% end %>
+                  <div class="property-type">
+                    <span class="badge badge-primary"><%= property.property_type.titleize %></span>
+                    <span class="badge badge-info"><%= property.listing_type.titleize %></span>
+                  </div>
+                </div>
+                
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <%= link_to property.listing&.title || 'Untitled Property', real_estate_property_path(property), class: 'text-dark' %>
+                  </h5>
+                  <p class="card-text text-muted mb-2">
+                    <i class="fas fa-map-marker-alt"></i> 
+                    <%= [property.address, property.city, property.state].compact.join(', ') %>
+                  </p>
+                  <div class="property-price mb-3">
+                    <strong><%= number_to_currency(property.listing&.price) %></strong>
+                    <% if property.listing_type == 'rent' %>
+                      <span class="text-muted">/ month</span>
+                    <% end %>
+                  </div>
+                  <div class="property-features">
+                    <span class="feature"><i class="fas fa-bed"></i> <%= property.bedrooms || 0 %> Beds</span>
+                    <span class="feature"><i class="fas fa-bath"></i> <%= property.bathrooms || 0 %> Baths</span>
+                    <span class="feature"><i class="fas fa-ruler-combined"></i> <%= property.area || 0 %> <%= property.area_unit || 'sq ft' %></span>
+                  </div>
+                </div>
+                <div class="card-footer bg-white">
+                  <%= link_to 'View Details', real_estate_property_path(property), class: 'btn btn-sm btn-outline-primary' %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="pagination-container mt-4">
+          <%= paginate @properties %>
+        </div>
+      <% else %>
+        <div class="card">
+          <div class="card-body text-center py-5">
+            <i class="fas fa-home fa-4x text-muted mb-3"></i>
+            <h3>No properties found</h3>
+            <p class="text-muted">Try adjusting your search criteria or check back later for new listings.</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .property-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+  }
+  
+  .property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .property-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+  
+  .property-image img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+  
+  .property-type {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+  }
+  
+  .featured-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+  }
+  
+  .property-features {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .feature {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+</style>

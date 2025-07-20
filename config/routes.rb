@@ -15,6 +15,69 @@ Rails.application.routes.draw do
         },
         router_name: :spree
       )
+
+      # Komplex Storefront routes
+      resources :merchants, controller: 'komplex/storefront/merchants', only: [:index, :show, :new, :create]
+
+      resources :listings, controller: 'komplex/storefront/listings' do
+        collection do
+          get :my_listings
+        end
+      end
+
+      resources :real_estate_properties, controller: 'komplex/storefront/real_estate_properties' do
+        collection do
+          get :my_properties
+        end
+      end
+
+      resources :restaurants, controller: 'komplex/storefront/restaurants' do
+        collection do
+          get :my_restaurants
+        end
+      end
+
+      resources :services, controller: 'komplex/storefront/services' do
+        collection do
+          get :my_services
+        end
+      end
+
+    end
+
+    # Komplex Admin routes
+    namespace :admin do
+      resources :merchants, controller: 'komplex/admin/merchants' do
+        member do
+          put :approve
+          get :approve
+          put :reject
+          get :reject
+        end
+      end
+
+      resources :listings, controller: 'komplex/admin/listings' do
+        member do
+          put :approve
+          get :approve
+          put :reject
+          get :reject
+        end
+      end
+
+      resources :advertisements, controller: 'komplex/admin/advertisements' do
+        member do
+          post :approve_listing
+          post :reject_listing
+        end
+      end
+      resources :real_estate_properties, controller: 'komplex/admin/real_estate_properties' do
+        member do
+          post :approve_listing
+          post :reject_listing
+        end
+      end
+      resources :restaurants, controller: 'komplex/admin/restaurants'
     end
   end
   # This line mounts Spree's routes at the root of your application.
@@ -26,9 +89,6 @@ Rails.application.routes.draw do
   # We ask that you don't use the :as option here, as Spree relies on it being
   # the default of "spree".
   mount Spree::Core::Engine, at: '/'
-
-  # Mount the Komplex engine
-  mount Komplex::Engine, at: '/'
 
   mount Sidekiq::Web => "/sidekiq" # access it at http://localhost:3000/sidekiq
 

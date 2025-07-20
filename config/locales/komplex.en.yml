@@ -1,0 +1,172 @@
+en:
+  komplex:
+    merchants:
+      menu_title: "Merchants"
+      index:
+        title: "Merchants"
+      new:
+        title: "New Merchant"
+      edit:
+        title: "Edit Merchant"
+      show:
+        title: "Merchant Details"
+      name: "Name"
+      user: "User"
+      status: "Status"
+      commission_rate: "Commission Rate"
+      commission_rate_hint: "Enter a decimal value between 0 and 1 (e.g., 0.1 for 10%)"
+      description: "Description"
+      created_at: "Created At"
+      updated_at: "Updated At"
+      back_to_merchants: "Back to Merchants"
+      edit_button: "Edit Merchant"
+      approve: "Approve"
+      reject: "Reject"
+      confirm_approve: "Are you sure you want to approve this merchant?"
+      confirm_reject: "Are you sure you want to reject this merchant?"
+      no_merchants_found: "No merchants found."
+      no_user: "No user assigned"
+      details: "Merchant Details"
+      listings: "Merchant Listings"
+      no_listings: "This merchant has no listings yet."
+
+    listings:
+      menu_title: "Listings"
+      index:
+        title: "Listings"
+      new:
+        title: "New Listing"
+      edit:
+        title: "Edit Listing"
+      show:
+        title: "Listing Details"
+      listing_title: "Title"
+      description: "Description"
+      price: "Price"
+      merchant: "Merchant"
+      status: "Status"
+      featured: "Featured"
+      type: "Type"
+      created_at: "Created At"
+      updated_at: "Updated At"
+      back_to_listings: "Back to Listings"
+      edit_button: "Edit Listing"
+      approve: "Approve"
+      reject: "Reject"
+      confirm_approve: "Are you sure you want to approve this listing?"
+      confirm_reject: "Are you sure you want to reject this listing?"
+      no_listings_found: "No listings found."
+      details: "Listing Details"
+      view: "View"
+
+    advertisements:
+      menu_title: "Advertisements"
+      index:
+        title: "Advertisements"
+      new:
+        title: "New Advertisement"
+      edit:
+        title: "Edit Advertisement"
+      show:
+        title: "Advertisement Details"
+      ad_title: "Title"
+      description: "Description"
+      placement: "Placement"
+      ad_type: "Type"
+      merchant: "Merchant"
+      listing: "Listing"
+      starts_at: "Starts At"
+      ends_at: "Ends At"
+      cost: "Cost"
+      status: "Status"
+      created_at: "Created At"
+      updated_at: "Updated At"
+      back_to_advertisements: "Back to Advertisements"
+      edit_button: "Edit Advertisement"
+      no_advertisements_found: "No advertisements found."
+      details: "Advertisement Details"
+
+    properties:
+      menu_title: "Properties"
+      index:
+        title: "Properties"
+      new:
+        title: "New Property"
+      edit:
+        title: "Edit Property"
+      show:
+        title: "Property Details"
+      property_type: "Property Type"
+      listing_type: "Listing Type"
+      bedrooms: "Bedrooms"
+      bathrooms: "Bathrooms"
+      area: "Area"
+      area_unit: "Area Unit"
+      address: "Address"
+      city: "City"
+      state: "State"
+      postal_code: "Postal Code"
+      country: "Country"
+      latitude: "Latitude"
+      longitude: "Longitude"
+      furnished: "Furnished"
+      available_from: "Available From"
+      created_at: "Created At"
+      updated_at: "Updated At"
+      back_to_properties: "Back to Properties"
+      edit_button: "Edit Property"
+      no_properties_found: "No properties found."
+      details: "Property Details"
+
+    restaurants:
+      menu_title: "Restaurants"
+      index:
+        title: "Restaurants"
+      new:
+        title: "New Restaurant"
+      edit:
+        title: "Edit Restaurant"
+      show:
+        title: "Restaurant Details"
+      cuisine_type: "Cuisine Type"
+      menu_items: "Menu Items"
+      opening_hours: "Opening Hours"
+      address: "Address"
+      city: "City"
+      state: "State"
+      postal_code: "Postal Code"
+      country: "Country"
+      latitude: "Latitude"
+      longitude: "Longitude"
+      delivery_available: "Delivery Available"
+      takeout_available: "Takeout Available"
+      reservation_required: "Reservation Required"
+      created_at: "Created At"
+      updated_at: "Updated At"
+      back_to_restaurants: "Back to Restaurants"
+      edit_button: "Edit Restaurant"
+      no_restaurants_found: "No restaurants found."
+      details: "Restaurant Details"
+
+    services:
+      menu_title: "Services"
+      index:
+        title: "Services"
+      new:
+        title: "New Service"
+      edit:
+        title: "Edit Service"
+      show:
+        title: "Service Details"
+      category: "Category"
+      pricing_model: "Pricing Model"
+      price: "Price"
+      duration_minutes: "Duration (minutes)"
+      service_area: "Service Area"
+      remote_available: "Remote Available"
+      created_at: "Created At"
+      updated_at: "Updated At"
+      back_to_services: "Back to Services"
+      edit_button: "Edit Service"
+      no_services_found: "No services found."
+      details: "Service Details"

@@ -1,0 +1,223 @@
+<%= form_with model: @property, local: true do |f| %>
+  <% if @property.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(@property.errors.count, "error") %> prohibited this property from being saved:</h5>
+      <ul>
+        <% @property.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Basic Information</h5>
+    </div>
+    <div class="card-body">
+      <%= f.fields_for :listing do |listing_form| %>
+        <div class="form-group">
+          <%= listing_form.label :title, 'Property Title' %>
+          <%= listing_form.text_field :title, class: 'form-control', required: true, placeholder: 'e.g. Beautiful 3-Bedroom House with Garden' %>
+          <small class="form-text text-muted">A clear, descriptive title will attract more potential buyers/renters.</small>
+        </div>
+
+        <div class="form-group">
+          <%= listing_form.label :description, 'Property Description' %>
+          <%= listing_form.text_area :description, class: 'form-control', rows: 5, required: true, 
+              placeholder: 'Describe your property in detail. Include information about the neighborhood, amenities, recent renovations, etc.' %>
+          <small class="form-text text-muted">Be detailed and highlight the best features of your property.</small>
+        </div>
+
+        <div class="form-group">
+          <%= listing_form.label :price, 'Price' %>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <%= listing_form.number_field :price, class: 'form-control', required: true, min: 0, step: 'any' %>
+          </div>
+          <small class="form-text text-muted">For rentals, this is the monthly rent.</small>
+        </div>
+      <% end %>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :property_type, 'Property Type' %>
+            <%= f.select :property_type, 
+                [['House', 'house'], ['Apartment', 'apartment'], ['Condo', 'condo'], 
+                 ['Land', 'land'], ['Commercial', 'commercial']], 
+                { include_blank: 'Select Property Type' }, 
+                { class: 'form-control', required: true } %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :listing_type, 'Listing Type' %>
+            <%= f.select :listing_type, 
+                [['For Sale', 'sale'], ['For Rent', 'rent']], 
+                { include_blank: 'Select Listing Type' }, 
+                { class: 'form-control', required: true } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Property Details</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :bedrooms, 'Bedrooms' %>
+            <%= f.number_field :bedrooms, class: 'form-control', min: 0 %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :bathrooms, 'Bathrooms' %>
+            <%= f.number_field :bathrooms, class: 'form-control', min: 0, step: 0.5 %>
+            <small class="form-text text-muted">Use 0.5 for half bathrooms.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :area, 'Area' %>
+            <div class="input-group">
+              <%= f.number_field :area, class: 'form-control', min: 0 %>
+              <div class="input-group-append">
+                <%= f.select :area_unit, [['sq ft', 'sq_ft'], ['sq m', 'sq_m'], ['acres', 'acres'], ['hectares', 'hectares']], {}, { class: 'form-control' } %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :available_from, 'Available From' %>
+            <%= f.date_field :available_from, class: 'form-control' %>
+            <small class="form-text text-muted">Leave blank if available immediately.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="custom-control custom-checkbox">
+          <%= f.check_box :furnished, class: 'custom-control-input' %>
+          <%= f.label :furnished, 'This property is furnished', class: 'custom-control-label' %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Location</h5>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <%= f.label :address, 'Street Address' %>
+        <%= f.text_field :address, class: 'form-control', required: true, placeholder: 'e.g. 123 Main St' %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :city, 'City' %>
+            <%= f.text_field :city, class: 'form-control', required: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :state, 'State/Province' %>
+            <%= f.text_field :state, class: 'form-control', required: true %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :postal_code, 'Postal/Zip Code' %>
+            <%= f.text_field :postal_code, class: 'form-control', required: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :country, 'Country' %>
+            <%= f.text_field :country, class: 'form-control', required: true %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :latitude, 'Latitude (optional)' %>
+            <%= f.text_field :latitude, class: 'form-control', placeholder: 'e.g. 40.7128' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :longitude, 'Longitude (optional)' %>
+            <%= f.text_field :longitude, class: 'form-control', placeholder: 'e.g. -74.0060' %>
+          </div>
+        </div>
+      </div>
+      <small class="form-text text-muted">If you don't know the coordinates, leave them blank and we'll try to geocode them from the address.</small>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Images</h5>
+    </div>
+    <div class="card-body">
+      <%= f.fields_for :listing do |listing_form| %>
+        <div class="form-group">
+          <%= listing_form.label :images, 'Property Images' %>
+          <%= listing_form.file_field :images, multiple: true, class: 'form-control-file', accept: 'image/*' %>
+          <small class="form-text text-muted">You can select multiple images. The first image will be used as the main image.</small>
+        </div>
+
+        <% if @property.listing&.images&.attached? %>
+          <div class="current-images mt-3">
+            <h6>Current Images</h6>
+            <div class="row">
+              <% @property.listing.images.each do |image| %>
+                <div class="col-md-3 mb-3">
+                  <div class="card">
+                    <%= image_tag image, class: 'card-img-top', alt: 'Property image' %>
+                    <div class="card-body p-2 text-center">
+                      <%= link_to 'Remove', '#', class: 'btn btn-sm btn-outline-danger' %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" id="terms" required>
+      <label class="custom-control-label" for="terms">
+        I confirm that all information provided is accurate and I have the right to list this property.
+      </label>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit @property.new_record? ? 'Create Property Listing' : 'Update Property Listing', class: 'btn btn-primary btn-lg' %>
+    <%= link_to 'Cancel', @property.new_record? ? real_estate_properties_path : real_estate_property_path(@property), class: 'btn btn-outline-secondary btn-lg ml-2' %>
+  </div>
+<% end %>

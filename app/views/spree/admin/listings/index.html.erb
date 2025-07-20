@@ -1,0 +1,46 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:listings) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t(:new_listing), new_admin_listing_path, class: 'btn btn-primary' %>
+<% end %>
+
+<% if @listings.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th><%= Spree.t(:id) %></th>
+        <th><%= Spree.t(:title) %></th>
+        <th><%= Spree.t(:price) %></th>
+        <th><%= Spree.t(:status) %></th>
+        <th><%= Spree.t(:featured) %></th>
+        <th><%= Spree.t(:actions) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @listings.each do |listing| %>
+        <tr>
+          <td><%= listing.id %></td>
+          <td><%= listing.title %></td>
+          <td><%= listing.price %></td>
+          <td><%= listing.status %></td>
+          <td><%= listing.featured? ? Spree.t(:yes) : Spree.t(:no) %></td>
+          <td class="actions">
+            <%= link_to_edit listing, no_text: true, class: 'edit' %>
+            <%= link_to_delete listing, no_text: true %>
+            <% if listing.status == 'pending' %>
+              <%= link_to Spree.t(:approve), approve_admin_listing_path(listing), method: :put, class: 'btn btn-success btn-sm' %>
+              <%= link_to Spree.t(:reject), reject_admin_listing_path(listing), method: :put, class: 'btn btn-danger btn-sm' %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @listings %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_listings_found) %>
+  </div>
+<% end %>

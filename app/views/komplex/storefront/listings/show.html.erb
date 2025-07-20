@@ -1,0 +1,195 @@
+<% content_for :title do %>
+  <%= @listing.title %> | Marketplace
+<% end %>
+
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to 'Home', root_path %></li>
+      <li class="breadcrumb-item"><%= link_to 'Marketplace', listings_path %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= @listing.title %></li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <% if @listing.images.attached? %>
+          <div id="listingCarousel" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+              <% @listing.images.each_with_index do |image, index| %>
+                <li data-target="#listingCarousel" data-slide-to="<%= index %>" class="<%= 'active' if index.zero? %>"></li>
+              <% end %>
+            </ol>
+            <div class="carousel-inner">
+              <% @listing.images.each_with_index do |image, index| %>
+                <div class="carousel-item <%= 'active' if index.zero? %>">
+                  <%= image_tag image, class: 'd-block w-100', style: 'height: 400px; object-fit: cover;' %>
+                </div>
+              <% end %>
+            </div>
+            <a class="carousel-control-prev" href="#listingCarousel" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#listingCarousel" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        <% else %>
+          <div class="bg-light text-center py-5" style="height: 400px;">
+            <i class="fas fa-image fa-5x text-muted mt-5"></i>
+            <p class="mt-3 text-muted">No images available</p>
+          </div>
+        <% end %>
+
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="card-title mb-0"><%= @listing.title %></h2>
+            <span class="badge badge-primary"><%= number_to_currency(@listing.price) %></span>
+          </div>
+
+          <% if @listing.featured? %>
+            <div class="badge badge-warning mb-3">Featured</div>
+          <% end %>
+
+          <p class="card-text"><%= simple_format(@listing.description) %></p>
+
+          <hr>
+
+          <h4>Listing Details</h4>
+          <% case @listing.listable_type %>
+          <% when 'Komplex::Property', 'Komplex::RealEstateProperty' %>
+            <%= render 'property_details', property: @listing.listable %>
+          <% when 'Komplex::Restaurant' %>
+            <%= render 'restaurant_details', restaurant: @listing.listable %>
+          <% when 'Komplex::Service' %>
+            <%= render 'service_details', service: @listing.listable %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Merchant Information</h5>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title"><%= link_to @listing.merchant.name, merchant_path(@listing.merchant) %></h5>
+          <p class="card-text"><%= @listing.merchant.description %></p>
+          <p class="card-text">
+            <small class="text-muted">Member since <%= @listing.merchant.created_at.strftime('%B %Y') %></small>
+          </p>
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#contactMerchantModal">
+            Contact Merchant
+          </a>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Listing Information</h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            <strong>Listed on:</strong> <%= @listing.published_at.strftime('%B %d, %Y') %>
+          </p>
+          <p class="card-text">
+            <strong>Listing ID:</strong> <%= @listing.id %>
+          </p>
+          <p class="card-text">
+            <strong>Type:</strong>
+            <% case @listing.listable_type %>
+            <% when 'Komplex::Property', 'Komplex::RealEstateProperty' %>
+              <i class="fas fa-home"></i> Property
+            <% when 'Komplex::Restaurant' %>
+              <i class="fas fa-utensils"></i> Restaurant
+            <% when 'Komplex::Service' %>
+              <i class="fas fa-concierge-bell"></i> Service
+            <% end %>
+          </p>
+
+          <% if (@listing.listable_type == 'Komplex::Property' || @listing.listable_type == 'Komplex::RealEstateProperty') && @listing.listable.latitude && @listing.listable.longitude %>
+            <div id="map" style="height: 200px;" class="mt-3"></div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @related_listings.any? %>
+    <div class="row mt-4">
+      <div class="col-12">
+        <h3>More from this merchant</h3>
+        <div class="row">
+          <% @related_listings.each do |listing| %>
+            <div class="col-md-3 mb-4">
+              <div class="card h-100">
+                <% if listing.images.attached? %>
+                  <%= image_tag listing.images.first, class: 'card-img-top', style: 'height: 150px; object-fit: cover;' %>
+                <% else %>
+                  <div class="bg-light text-center py-4" style="height: 150px;">
+                    <i class="fas fa-image fa-2x text-muted mt-3"></i>
+                  </div>
+                <% end %>
+                <div class="card-body">
+                  <h5 class="card-title"><%= link_to listing.title, listing_path(listing) %></h5>
+                  <p class="card-text font-weight-bold"><%= number_to_currency(listing.price) %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Contact Merchant Modal -->
+<div class="modal fade" id="contactMerchantModal" tabindex="-1" role="dialog" aria-labelledby="contactMerchantModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="contactMerchantModalLabel">Contact <%= @listing.merchant.name %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="messageSubject">Subject</label>
+            <input type="text" class="form-control" id="messageSubject" placeholder="Regarding: <%= @listing.title %>">
+          </div>
+          <div class="form-group">
+            <label for="messageContent">Message</label>
+            <textarea class="form-control" id="messageContent" rows="5" placeholder="Your message to the merchant..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Send Message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if (@listing.listable_type == 'Komplex::Property' || @listing.listable_type == 'Komplex::RealEstateProperty') && @listing.listable.latitude && @listing.listable.longitude %>
+  <% content_for :javascript do %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var map = L.map('map').setView([<%= @listing.listable.latitude %>, <%= @listing.listable.longitude %>], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker([<%= @listing.listable.latitude %>, <%= @listing.listable.longitude %>]).addTo(map)
+          .bindPopup('<%= @listing.title %>');
+      });
+    </script>
+  <% end %>
+<% end %>

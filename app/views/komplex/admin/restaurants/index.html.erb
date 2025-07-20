@@ -1,0 +1,62 @@
+<% content_for :page_title do %>
+  Restaurants
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to 'New Restaurant', spree.new_admin_restaurant_path, class: 'btn btn-primary' %>
+<% end %>
+
+<% if @restaurants.any? %>
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Restaurants</h5>
+    </div>
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Listing</th>
+            <th>Cuisine Type</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Delivery</th>
+            <th>Takeout</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @restaurants.each do |restaurant| %>
+            <tr>
+              <td><%= restaurant.id %></td>
+              <td>
+                <% if restaurant.listing %>
+                  <%= link_to restaurant.listing.title, spree.admin_listing_path(restaurant.listing) %>
+                <% else %>
+                  <span class="text-muted">No listing</span>
+                <% end %>
+              </td>
+              <td><%= restaurant.cuisine_type %></td>
+              <td><%= restaurant.address %></td>
+              <td><%= restaurant.city %></td>
+              <td><%= restaurant.delivery_available? ? 'Yes' : 'No' %></td>
+              <td><%= restaurant.takeout_available? ? 'Yes' : 'No' %></td>
+              <td class="actions">
+                <%= link_to 'View', spree.admin_restaurant_path(restaurant), class: 'btn btn-sm btn-info' %>
+                <%= link_to 'Edit', spree.edit_admin_restaurant_path(restaurant), class: 'btn btn-sm btn-primary' %>
+                <%= button_to 'Delete', spree.admin_restaurant_path(restaurant), method: :delete, form: { data: { turbo_confirm: 'Are you sure?' } }, class: 'btn btn-sm btn-danger' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+      <%= paginate @restaurants %>
+    </div>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <p>No restaurants found. <%= link_to 'Create your first restaurant', spree.new_admin_restaurant_path %>.</p>
+  </div>
+<% end %>

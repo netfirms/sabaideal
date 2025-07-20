@@ -1,0 +1,24 @@
+<dl class="row">
+  <dt class="col-sm-4">Property Type:</dt>
+  <dd class="col-sm-8"><%= property.property_type %></dd>
+
+  <% if property.bedrooms.present? %>
+    <dt class="col-sm-4">Bedrooms:</dt>
+    <dd class="col-sm-8"><%= property.bedrooms %></dd>
+  <% end %>
+
+  <% if property.bathrooms.present? %>
+    <dt class="col-sm-4">Bathrooms:</dt>
+    <dd class="col-sm-8"><%= property.bathrooms %></dd>
+  <% end %>
+
+  <% if property.area.present? %>
+    <dt class="col-sm-4">Area:</dt>
+    <dd class="col-sm-8"><%= property.area %> sq.m</dd>
+  <% end %>
+
+  <% if property.address.present? %>
+    <dt class="col-sm-4">Address:</dt>
+    <dd class="col-sm-8"><%= property.address %></dd>
+  <% end %>
+</dl>

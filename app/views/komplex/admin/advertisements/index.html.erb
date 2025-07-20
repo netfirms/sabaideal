@@ -1,0 +1,51 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.advertisements.index.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.advertisements.new.title'), spree.new_admin_advertisement_path, class: 'btn btn-primary' %>
+<% end %>
+
+<% if @advertisements.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t('komplex.advertisements.title') %></th>
+          <th><%= Spree.t('komplex.advertisements.merchant') %></th>
+          <th><%= Spree.t('komplex.advertisements.placement') %></th>
+          <th><%= Spree.t('komplex.advertisements.ad_type') %></th>
+          <th><%= Spree.t('komplex.advertisements.status') %></th>
+          <th><%= Spree.t('komplex.advertisements.starts_at') %></th>
+          <th><%= Spree.t('komplex.advertisements.ends_at') %></th>
+          <th><%= Spree.t('komplex.advertisements.cost') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @advertisements.each do |advertisement| %>
+          <tr>
+            <td><%= link_to advertisement.title, spree.admin_advertisement_path(advertisement) %></td>
+            <td><%= advertisement.merchant.name if advertisement.merchant %></td>
+            <td><%= advertisement.placement %></td>
+            <td><%= advertisement.ad_type %></td>
+            <td><span class="badge <%= advertisement.status == 'active' ? 'badge-success' : (advertisement.status == 'inactive' ? 'badge-danger' : 'badge-warning') %>"><%= advertisement.status %></span></td>
+            <td><%= l advertisement.starts_at.to_date %></td>
+            <td><%= l advertisement.ends_at.to_date %></td>
+            <td><%= number_to_currency(advertisement.cost) %></td>
+            <td class="actions">
+              <%= link_to_edit advertisement, no_text: true, class: 'btn btn-primary btn-sm' %>
+              <%= link_to_delete advertisement, no_text: true, class: 'btn btn-danger btn-sm' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('komplex.advertisements.no_advertisements_found') %>
+  </div>
+<% end %>
+
+<%= paginate @advertisements %>

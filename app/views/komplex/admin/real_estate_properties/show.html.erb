@@ -1,0 +1,134 @@
+<% content_for :page_title do %>
+  Property Details
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to 'Edit', spree.edit_admin_real_estate_property_path(@property), class: 'btn btn-primary' %>
+  <%= link_to 'Back to List', spree.admin_real_estate_properties_path, class: 'btn btn-secondary' %>
+
+  <% if @property.listing&.pending? %>
+    <%= link_to 'Approve Listing', '#', class: 'btn btn-success ml-2', 
+        onclick: "if(confirm('Are you sure you want to approve this listing?')) { 
+          document.getElementById('approve_listing_form').submit(); 
+          return false; 
+        }" %>
+    <%= link_to 'Reject Listing', '#', class: 'btn btn-danger ml-2', 
+        onclick: "if(confirm('Are you sure you want to reject this listing?')) { 
+          document.getElementById('reject_listing_form').submit(); 
+          return false; 
+        }" %>
+
+    <%= form_with url: spree.approve_listing_admin_real_estate_property_path(@property), method: :post, id: 'approve_listing_form', style: 'display: none;' do |f| %>
+    <% end %>
+
+    <%= form_with url: spree.reject_listing_admin_real_estate_property_path(@property), method: :post, id: 'reject_listing_form', style: 'display: none;' do |f| %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5>Property Information</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4">Property Type:</dt>
+          <dd class="col-sm-8"><%= @property.property_type %></dd>
+
+          <dt class="col-sm-4">Listing Type:</dt>
+          <dd class="col-sm-8"><%= @property.listing_type %></dd>
+
+          <dt class="col-sm-4">Bedrooms:</dt>
+          <dd class="col-sm-8"><%= @property.bedrooms %></dd>
+
+          <dt class="col-sm-4">Bathrooms:</dt>
+          <dd class="col-sm-8"><%= @property.bathrooms %></dd>
+
+          <dt class="col-sm-4">Area:</dt>
+          <dd class="col-sm-8"><%= @property.area %> <%= @property.area_unit %></dd>
+
+          <dt class="col-sm-4">Furnished:</dt>
+          <dd class="col-sm-8"><%= @property.furnished ? 'Yes' : 'No' %></dd>
+
+          <dt class="col-sm-4">Available From:</dt>
+          <dd class="col-sm-8"><%= @property.available_from&.strftime('%B %d, %Y') %></dd>
+        </dl>
+      </div>
+
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4">Address:</dt>
+          <dd class="col-sm-8"><%= @property.address %></dd>
+
+          <dt class="col-sm-4">City:</dt>
+          <dd class="col-sm-8"><%= @property.city %></dd>
+
+          <dt class="col-sm-4">State:</dt>
+          <dd class="col-sm-8"><%= @property.state %></dd>
+
+          <dt class="col-sm-4">Postal Code:</dt>
+          <dd class="col-sm-8"><%= @property.postal_code %></dd>
+
+          <dt class="col-sm-4">Country:</dt>
+          <dd class="col-sm-8"><%= @property.country %></dd>
+
+          <dt class="col-sm-4">Coordinates:</dt>
+          <dd class="col-sm-8">
+            <% if @property.latitude.present? && @property.longitude.present? %>
+              <%= @property.latitude %>, <%= @property.longitude %>
+            <% else %>
+              Not specified
+            <% end %>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @property.listing.present? %>
+  <div class="card">
+    <div class="card-header">
+      <h5>Listing Details</h5>
+    </div>
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-2">Title:</dt>
+        <dd class="col-sm-10"><%= @property.listing.title %></dd>
+
+        <dt class="col-sm-2">Description:</dt>
+        <dd class="col-sm-10"><%= @property.listing.description %></dd>
+
+        <dt class="col-sm-2">Price:</dt>
+        <dd class="col-sm-10"><%= number_to_currency(@property.listing.price) %></dd>
+
+        <dt class="col-sm-2">Merchant:</dt>
+        <dd class="col-sm-10">
+          <% if @property.listing.merchant.present? %>
+            <%= @property.listing.merchant.name %>
+          <% else %>
+            Not assigned
+          <% end %>
+        </dd>
+
+        <dt class="col-sm-2">Status:</dt>
+        <dd class="col-sm-10">
+          <% badge_class = case @property.listing.status
+                when 'published' then 'badge-success'
+                when 'pending' then 'badge-warning'
+                when 'rejected' then 'badge-danger'
+                else 'badge-secondary'
+                end %>
+          <span class="badge <%= badge_class %>">
+            <%= @property.listing.status&.capitalize %>
+          </span>
+        </dd>
+
+        <dt class="col-sm-2">Featured:</dt>
+        <dd class="col-sm-10"><%= @property.listing.featured ? 'Yes' : 'No' %></dd>
+      </dl>
+    </div>
+  </div>
+<% end %>

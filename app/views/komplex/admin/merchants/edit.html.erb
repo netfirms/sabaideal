@@ -1,0 +1,15 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.merchants.edit.title') %>: <%= @merchant.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.merchants.back_to_merchants'), spree.admin_merchants_path, class: 'btn btn-primary' %>
+<% end %>
+
+<%= form_for [:admin, @merchant], url: spree.admin_merchant_path(@merchant) do |f| %>
+  <fieldset>
+    <legend><%= Spree.t('komplex.merchants.edit.title') %></legend>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { f: f } %>
+  </fieldset>
+<% end %>

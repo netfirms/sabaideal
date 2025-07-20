@@ -1,0 +1,108 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.merchants.show.title') %>: <%= @merchant.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.merchants.back_to_merchants'), spree.admin_merchants_path, class: 'btn btn-primary' %>
+  <%= link_to Spree.t('komplex.merchants.edit_button'), spree.edit_admin_merchant_path(@merchant), class: 'btn btn-primary' %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title mb-0"><%= Spree.t('komplex.merchants.details') %></h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4"><%= Spree.t('komplex.merchants.name') %></dt>
+          <dd class="col-sm-8"><%= @merchant.name %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.merchants.user') %></dt>
+          <dd class="col-sm-8"><%= @merchant.user&.email || Spree.t('komplex.merchants.no_user') %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.merchants.status') %></dt>
+          <dd class="col-sm-8">
+            <span class="badge <%= @merchant.status == 'approved' ? 'badge-success' : (@merchant.status == 'rejected' ? 'badge-danger' : 'badge-warning') %>">
+              <%= @merchant.status %>
+            </span>
+          </dd>
+        </dl>
+      </div>
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4"><%= Spree.t('komplex.merchants.commission_rate') %></dt>
+          <dd class="col-sm-8"><%= number_to_percentage(@merchant.commission_rate * 100, precision: 2) %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.merchants.created_at') %></dt>
+          <dd class="col-sm-8"><%= l @merchant.created_at, format: :long %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.merchants.updated_at') %></dt>
+          <dd class="col-sm-8"><%= l @merchant.updated_at, format: :long %></dd>
+        </dl>
+      </div>
+    </div>
+
+    <% if @merchant.description.present? %>
+      <div class="row mt-4">
+        <div class="col-12">
+          <h6><%= Spree.t('komplex.merchants.description') %></h6>
+          <p><%= simple_format @merchant.description %></p>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @merchant.status == 'pending' %>
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="btn-group">
+            <%= link_to Spree.t('komplex.merchants.approve'), spree.approve_admin_merchant_path(@merchant), method: :put, class: 'btn btn-success', data: { confirm: Spree.t('komplex.merchants.confirm_approve') } %>
+            <%= link_to Spree.t('komplex.merchants.reject'), spree.reject_admin_merchant_path(@merchant), method: :put, class: 'btn btn-danger', data: { confirm: Spree.t('komplex.merchants.confirm_reject') } %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title mb-0"><%= Spree.t('komplex.merchants.listings') %></h5>
+  </div>
+  <div class="card-body">
+    <% if @merchant.listings.any? %>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= Spree.t('komplex.listings.title') %></th>
+              <th><%= Spree.t('komplex.listings.price') %></th>
+              <th><%= Spree.t('komplex.listings.status') %></th>
+              <th><%= Spree.t('komplex.listings.type') %></th>
+              <th><%= Spree.t('komplex.listings.created_at') %></th>
+              <th class="actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @merchant.listings.each do |listing| %>
+              <tr>
+                <td><%= listing.title %></td>
+                <td><%= number_to_currency(listing.price) %></td>
+                <td><span class="badge <%= listing.status == 'published' ? 'badge-success' : (listing.status == 'rejected' ? 'badge-danger' : 'badge-warning') %>"><%= listing.status %></span></td>
+                <td><%= listing.listable_type.demodulize %></td>
+                <td><%= l listing.created_at.to_date %></td>
+                <td class="actions">
+                  <%= link_to Spree.t('komplex.listings.view'), spree.admin_listing_path(listing), class: 'btn btn-info btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        <%= Spree.t('komplex.merchants.no_listings') %>
+      </div>
+    <% end %>
+  </div>
+</div>

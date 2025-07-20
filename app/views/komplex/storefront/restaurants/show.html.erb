@@ -1,0 +1,135 @@
+<% content_for :title do %>
+  <%= @restaurant.listing.title %>
+<% end %>
+
+<div class="container my-5">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1><%= @restaurant.listing.title %></h1>
+      <p class="text-muted"><%= @restaurant.cuisine_type %></p>
+    </div>
+    <div class="col-md-4 text-end">
+      <% if current_merchant && @restaurant.listing.merchant_id == current_merchant.id %>
+        <%= link_to 'Edit Restaurant', edit_restaurant_path(@restaurant), class: 'btn btn-primary me-2' %>
+        <%= button_to 'Delete Restaurant', restaurant_path(@restaurant), method: :delete, data: { confirm: 'Are you sure you want to delete this restaurant?' }, class: 'btn btn-danger' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Description</h5>
+          <p class="card-text"><%= @restaurant.listing.description %></p>
+          
+          <h5 class="card-title mt-4">Features</h5>
+          <div class="mb-3">
+            <% if @restaurant.delivery_available %>
+              <span class="badge bg-success me-2">Delivery Available</span>
+            <% end %>
+            <% if @restaurant.takeout_available %>
+              <span class="badge bg-info me-2">Takeout Available</span>
+            <% end %>
+            <% if @restaurant.reservation_required %>
+              <span class="badge bg-warning">Reservation Required</span>
+            <% end %>
+          </div>
+          
+          <h5 class="card-title mt-4">Location</h5>
+          <p class="card-text">
+            <%= @restaurant.address %><br>
+            <%= @restaurant.city %>, <%= @restaurant.state %> <%= @restaurant.postal_code %><br>
+            <%= @restaurant.country %>
+          </p>
+          
+          <h5 class="card-title mt-4">Opening Hours</h5>
+          <% if @restaurant.opening_hours.present? %>
+            <% begin %>
+              <% hours = JSON.parse(@restaurant.opening_hours) %>
+              <ul class="list-group list-group-flush">
+                <% hours.each do |day, time| %>
+                  <li class="list-group-item d-flex justify-content-between">
+                    <span><%= day.capitalize %></span>
+                    <span><%= time %></span>
+                  </li>
+                <% end %>
+              </ul>
+            <% rescue JSON::ParserError %>
+              <p class="card-text">Opening hours information not available in the correct format.</p>
+            <% end %>
+          <% else %>
+            <p class="card-text">Opening hours information not available.</p>
+          <% end %>
+          
+          <h5 class="card-title mt-4">Menu Items</h5>
+          <% if @restaurant.menu_items.present? %>
+            <% begin %>
+              <% menu = JSON.parse(@restaurant.menu_items) %>
+              <div class="row">
+                <% menu.each do |item| %>
+                  <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <h6 class="card-title"><%= item['name'] %></h6>
+                        <p class="card-text"><%= item['description'] %></p>
+                        <p class="card-text fw-bold"><%= number_to_currency(item['price']) %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% rescue JSON::ParserError %>
+              <p class="card-text">Menu information not available in the correct format.</p>
+            <% end %>
+          <% else %>
+            <p class="card-text">Menu information not available.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Price</h5>
+          <p class="card-text fs-3 fw-bold"><%= number_to_currency(@restaurant.listing.price) %></p>
+          
+          <h5 class="card-title mt-4">Contact</h5>
+          <p class="card-text">
+            <% if @restaurant.listing.merchant %>
+              <%= @restaurant.listing.merchant.name %><br>
+              <%= mail_to @restaurant.listing.merchant.email, @restaurant.listing.merchant.email %>
+            <% else %>
+              Contact information not available.
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <% if @related_restaurants.any? %>
+    <div class="row mt-5">
+      <div class="col-12">
+        <h3 class="mb-4">Similar Restaurants</h3>
+        <div class="row">
+          <% @related_restaurants.each do |restaurant| %>
+            <div class="col-md-3 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title"><%= link_to restaurant.listing.title, restaurant_path(restaurant) %></h5>
+                  <p class="card-text text-muted"><%= restaurant.cuisine_type %></p>
+                  <p class="card-text"><%= truncate(restaurant.listing.description, length: 80) %></p>
+                </div>
+                <div class="card-footer">
+                  <span class="fw-bold"><%= number_to_currency(restaurant.listing.price) %></span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

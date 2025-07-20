@@ -1,0 +1,120 @@
+<% content_for :title do %>
+  Marketplace Listings
+<% end %>
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Filter Listings</h5>
+        </div>
+        <div class="card-body">
+          <%= form_with(url: listings_path, method: :get, local: true) do |f| %>
+            <div class="form-group">
+              <%= f.label :search, "Search" %>
+              <%= f.text_field :search, value: params[:search], class: 'form-control', placeholder: 'Search listings...' %>
+            </div>
+            
+            <div class="form-group">
+              <%= f.label :category_id, "Category" %>
+              <%= f.collection_select :category_id, Komplex::Category.all, :id, :name, { include_blank: 'All Categories', selected: params[:category_id] }, class: 'form-control' %>
+            </div>
+            
+            <div class="form-group">
+              <%= f.label :min_price, "Min Price" %>
+              <%= f.number_field :min_price, value: params[:min_price], class: 'form-control', min: 0, step: 'any' %>
+            </div>
+            
+            <div class="form-group">
+              <%= f.label :max_price, "Max Price" %>
+              <%= f.number_field :max_price, value: params[:max_price], class: 'form-control', min: 0, step: 'any' %>
+            </div>
+            
+            <div class="form-group">
+              <%= f.label :sort, "Sort By" %>
+              <%= f.select :sort, [
+                ['Newest', 'newest'],
+                ['Oldest', 'oldest'],
+                ['Price: Low to High', 'price_asc'],
+                ['Price: High to Low', 'price_desc']
+              ], { include_blank: 'Default', selected: params[:sort] }, class: 'form-control' %>
+            </div>
+            
+            <div class="form-group">
+              <%= f.submit "Apply Filters", class: 'btn btn-primary btn-block' %>
+              <%= link_to "Clear Filters", listings_path, class: 'btn btn-outline-secondary btn-block' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Marketplace Listings</h2>
+        <% if spree_current_user&.merchant %>
+          <%= link_to 'My Listings', my_listings_path, class: 'btn btn-outline-primary' %>
+          <%= link_to 'Add New Listing', new_listing_path, class: 'btn btn-primary' %>
+        <% else %>
+          <%= link_to 'Become a Merchant', new_merchant_path, class: 'btn btn-primary' %>
+        <% end %>
+      </div>
+      
+      <% if @listings.any? %>
+        <div class="row">
+          <% @listings.each do |listing| %>
+            <div class="col-md-4 mb-4">
+              <div class="card h-100">
+                <% if listing.featured? %>
+                  <div class="badge badge-warning position-absolute" style="top: 10px; right: 10px;">Featured</div>
+                <% end %>
+                
+                <% if listing.images.attached? %>
+                  <%= image_tag listing.images.first, class: 'card-img-top', style: 'height: 200px; object-fit: cover;' %>
+                <% else %>
+                  <div class="bg-light text-center py-5" style="height: 200px;">
+                    <i class="fas fa-image fa-3x text-muted"></i>
+                    <p class="mt-2 text-muted">No image</p>
+                  </div>
+                <% end %>
+                
+                <div class="card-body">
+                  <h5 class="card-title"><%= link_to listing.title, listing_path(listing) %></h5>
+                  <p class="card-text text-muted"><%= truncate(listing.description, length: 100) %></p>
+                  <p class="card-text font-weight-bold"><%= number_to_currency(listing.price) %></p>
+                  <p class="card-text">
+                    <small class="text-muted">
+                      <% case listing.listable_type %>
+                      <% when 'Komplex::Property' %>
+                        <i class="fas fa-home"></i> Property
+                      <% when 'Komplex::Restaurant' %>
+                        <i class="fas fa-utensils"></i> Restaurant
+                      <% when 'Komplex::Service' %>
+                        <i class="fas fa-concierge-bell"></i> Service
+                      <% end %>
+                    </small>
+                  </p>
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted">
+                    Listed by <%= link_to listing.merchant.name, merchant_path(listing.merchant) %> 
+                    on <%= listing.published_at.strftime('%b %d, %Y') %>
+                  </small>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="d-flex justify-content-center mt-4">
+          <%= paginate @listings %>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          <p>No listings found matching your criteria. Try adjusting your filters or check back later.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

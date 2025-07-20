@@ -1,0 +1,168 @@
+<% content_for :page_title do %>
+  Restaurant Details
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to 'Back to Restaurants', spree.admin_restaurants_path, class: 'btn btn-primary' %>
+  <%= link_to 'Edit Restaurant', spree.edit_admin_restaurant_path(@restaurant), class: 'btn btn-secondary' %>
+  <%= link_to 'Delete Restaurant', spree.admin_restaurant_path(@restaurant), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+<% end %>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">Restaurant Details</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4">ID:</dt>
+          <dd class="col-sm-8"><%= @restaurant.id %></dd>
+
+          <dt class="col-sm-4">Associated Listing:</dt>
+          <dd class="col-sm-8">
+            <% if @restaurant.listing %>
+              <%= link_to @restaurant.listing.title, spree.admin_listing_path(@restaurant.listing) %>
+            <% else %>
+              <span class="text-muted">No listing</span>
+            <% end %>
+          </dd>
+
+          <dt class="col-sm-4">Cuisine Type:</dt>
+          <dd class="col-sm-8"><%= @restaurant.cuisine_type %></dd>
+
+          <dt class="col-sm-4">Address:</dt>
+          <dd class="col-sm-8"><%= @restaurant.address %></dd>
+
+          <dt class="col-sm-4">City:</dt>
+          <dd class="col-sm-8"><%= @restaurant.city %></dd>
+
+          <dt class="col-sm-4">State:</dt>
+          <dd class="col-sm-8"><%= @restaurant.state %></dd>
+
+          <dt class="col-sm-4">Postal Code:</dt>
+          <dd class="col-sm-8"><%= @restaurant.postal_code %></dd>
+
+          <dt class="col-sm-4">Country:</dt>
+          <dd class="col-sm-8"><%= @restaurant.country %></dd>
+
+          <dt class="col-sm-4">Coordinates:</dt>
+          <dd class="col-sm-8">
+            <% if @restaurant.latitude && @restaurant.longitude %>
+              <%= @restaurant.latitude %>, <%= @restaurant.longitude %>
+            <% else %>
+              <span class="text-muted">Not set</span>
+            <% end %>
+          </dd>
+        </dl>
+      </div>
+
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4">Delivery Available:</dt>
+          <dd class="col-sm-8"><%= @restaurant.delivery_available? ? 'Yes' : 'No' %></dd>
+
+          <dt class="col-sm-4">Takeout Available:</dt>
+          <dd class="col-sm-8"><%= @restaurant.takeout_available? ? 'Yes' : 'No' %></dd>
+
+          <dt class="col-sm-4">Reservation Required:</dt>
+          <dd class="col-sm-8"><%= @restaurant.reservation_required? ? 'Yes' : 'No' %></dd>
+
+          <dt class="col-sm-4">Created:</dt>
+          <dd class="col-sm-8"><%= @restaurant.created_at.strftime('%B %d, %Y at %I:%M %p') %></dd>
+
+          <dt class="col-sm-4">Updated:</dt>
+          <dd class="col-sm-8"><%= @restaurant.updated_at.strftime('%B %d, %Y at %I:%M %p') %></dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h6 class="card-title">Menu Items</h6>
+          </div>
+          <div class="card-body">
+            <% if @restaurant.menu_items.present? %>
+              <% begin %>
+                <% menu = @restaurant.menu_items.is_a?(Hash) ? @restaurant.menu_items : JSON.parse(@restaurant.menu_items) %>
+                <% if menu.any? %>
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% menu.each do |item| %>
+                        <tr>
+                          <% if item.is_a?(Hash) %>
+                            <td><%= item['name'] %></td>
+                            <td><%= number_to_currency(item['price']) %></td>
+                            <td><%= item['description'] %></td>
+                          <% elsif item.is_a?(String) %>
+                            <td colspan="3"><%= item %></td>
+                          <% else %>
+                            <td colspan="3">Invalid menu item format</td>
+                          <% end %>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                <% else %>
+                  <p class="text-muted">No menu items available</p>
+                <% end %>
+              <% rescue JSON::ParserError %>
+                <p class="text-muted">Menu information not available in the correct format.</p>
+              <% end %>
+            <% else %>
+              <p class="text-muted">No menu items available</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h6 class="card-title">Opening Hours</h6>
+          </div>
+          <div class="card-body">
+            <% if @restaurant.opening_hours.present? %>
+              <% begin %>
+                <% hours = @restaurant.opening_hours.is_a?(Hash) ? @restaurant.opening_hours : JSON.parse(@restaurant.opening_hours) %>
+                <% if hours.any? %>
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Day</th>
+                        <th>Hours</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% hours.each do |day, time| %>
+                        <tr>
+                          <td><%= day.capitalize %></td>
+                          <td><%= time %></td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                <% else %>
+                  <p class="text-muted">No opening hours available</p>
+                <% end %>
+              <% rescue JSON::ParserError %>
+                <p class="text-muted">Opening hours information not available in the correct format.</p>
+              <% end %>
+            <% else %>
+              <p class="text-muted">No opening hours available</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

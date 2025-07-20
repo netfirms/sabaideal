@@ -1,0 +1,58 @@
+<% content_for :page_title do %>
+  <%= @advertisement.title %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.advertisements.back_to_advertisements'), spree.admin_advertisements_path, class: 'btn btn-primary' %>
+  <%= link_to Spree.t('komplex.advertisements.edit'), spree.edit_admin_advertisement_path(@advertisement), class: 'btn btn-primary' %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <%= Spree.t('komplex.advertisements.details') %>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.title') %></dt>
+          <dd class="col-sm-8"><%= @advertisement.title %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.description') %></dt>
+          <dd class="col-sm-8"><%= @advertisement.description %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.merchant') %></dt>
+          <dd class="col-sm-8"><%= @advertisement.merchant.name if @advertisement.merchant %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.listing') %></dt>
+          <dd class="col-sm-8"><%= @advertisement.listing.title if @advertisement.listing %></dd>
+        </dl>
+      </div>
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.placement') %></dt>
+          <dd class="col-sm-8"><%= @advertisement.placement %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.ad_type') %></dt>
+          <dd class="col-sm-8"><%= @advertisement.ad_type %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.status') %></dt>
+          <dd class="col-sm-8">
+            <span class="badge <%= @advertisement.status == 'active' ? 'badge-success' : (@advertisement.status == 'inactive' ? 'badge-danger' : 'badge-warning') %>">
+              <%= @advertisement.status %>
+            </span>
+          </dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.starts_at') %></dt>
+          <dd class="col-sm-8"><%= l @advertisement.starts_at %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.ends_at') %></dt>
+          <dd class="col-sm-8"><%= l @advertisement.ends_at %></dd>
+
+          <dt class="col-sm-4"><%= Spree.t('komplex.advertisements.cost') %></dt>
+          <dd class="col-sm-8"><%= number_to_currency(@advertisement.cost) %></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

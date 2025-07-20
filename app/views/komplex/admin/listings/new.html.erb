@@ -1,0 +1,16 @@
+<% content_for :page_title do %>
+  New Listing
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to 'Back to Listings', spree.admin_listings_path, class: 'btn btn-primary' %>
+<% end %>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">New Listing</h5>
+  </div>
+  <div class="card-body">
+    <%= render 'form' %>
+  </div>
+</div>

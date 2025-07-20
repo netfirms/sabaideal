@@ -1,0 +1,45 @@
+<% if can?(:admin, Spree::Merchant) %>
+  <li class="nav-item">
+    <%= active_link_to spree.admin_merchants_path, class: 'nav-link' do %>
+      <%= icon 'users' %>
+      <%= Spree.t('Merchants') %>
+    <% end %>
+  </li>
+<% end %>
+
+<% if can?(:admin, Komplex::Listing) %>
+  <li class="nav-item">
+    <%= active_link_to spree.admin_listings_path, class: 'nav-link' do %>
+      <%= icon 'list' %>
+      <%= Spree.t('Listings') %>
+    <% end %>
+  </li>
+<% end %>
+
+<% if can?(:admin, Komplex::Advertisement) %>
+  <li class="nav-item">
+    <%= active_link_to spree.admin_advertisements_path, class: 'nav-link' do %>
+      <%= icon 'speaker' %>
+      <%= Spree.t('Advertisements') %>
+    <% end %>
+  </li>
+<% end %>
+
+<% if can?(:admin, Komplex::RealEstateProperty) %>
+  <li class="nav-item">
+    <%= active_link_to spree.admin_real_estate_properties_path, class: 'nav-link' do %>
+      <%= icon 'home' %>
+      <%= Spree.t('RealEstateProperties') %>
+    <% end %>
+  </li>
+<% end %>
+
+<% if can?(:admin, Komplex::Restaurant) %>
+  <li class="nav-item">
+    <%= active_link_to spree.admin_restaurants_path, class: 'nav-link' do %>
+      <%= icon 'utensils' %>
+      <%= Spree.t('Restaurants') %>
+    <% end %>
+  </li>
+<% end %>
+

@@ -1,0 +1,31 @@
+<% content_for :title do %>
+  Edit Listing | Marketplace
+<% end %>
+
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to 'Home', root_path %></li>
+      <li class="breadcrumb-item"><%= link_to 'Marketplace', listings_path %></li>
+      <li class="breadcrumb-item"><%= link_to 'My Listings', my_listings_path %></li>
+      <li class="breadcrumb-item active" aria-current="page">Edit Listing</li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Edit Listing: <%= @listing.title %></h2>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-4">
+            Please update the form below to edit your listing. Any changes will require approval before they appear in the marketplace.
+          </p>
+          
+          <%= render 'form' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

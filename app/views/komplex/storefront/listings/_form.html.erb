@@ -1,0 +1,309 @@
+<%= form_with(model: @listing, local: true) do |f| %>
+  <div class="form-group">
+    <%= f.label :title %>
+    <%= f.text_field :title, class: 'form-control', required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :description, class: 'form-control', rows: 5, required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :price %>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">$</span>
+      </div>
+      <%= f.number_field :price, class: 'form-control', step: '0.01', min: '0', required: true %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :condition %>
+    <%= f.select :condition, [
+      ['New', 'new'],
+      ['Used', 'used'],
+      ['Like New', 'like_new'],
+      ['Good', 'good'],
+      ['Fair', 'fair']
+    ], { include_blank: 'Select condition' }, { class: 'form-control', required: true } %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :category %>
+    <%= f.select :category, [
+      ['Property', 'property'],
+      ['Restaurant', 'restaurant'],
+      ['Service', 'service'],
+      ['Other', 'other']
+    ], { include_blank: 'Select category' }, { class: 'form-control', required: true } %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :listable_type, "Listing Type" %>
+    <%= f.select :listable_type, [
+      ['Property', 'Komplex::RealEstateProperty'],
+      ['Restaurant', 'Komplex::Restaurant'],
+      ['Service', 'Komplex::Service']
+    ], { include_blank: 'Select a listing type' }, { class: 'form-control', id: 'listing-type-select', required: true } %>
+  </div>
+
+  <div id="property-fields" class="listing-type-fields" style="display: none;">
+    <h4 class="mt-4">Property Details</h4>
+    <hr>
+
+    <%= f.fields_for :listable, (@listing.listable || Komplex::RealEstateProperty.new) do |property_form| %>
+      <div class="form-group">
+        <%= property_form.label :property_type %>
+        <%= property_form.select :property_type, [
+          ['Apartment', 'apartment'],
+          ['House', 'house'],
+          ['Condo', 'condo'],
+          ['Villa', 'villa'],
+          ['Land', 'land'],
+          ['Commercial', 'commercial']
+        ], { include_blank: 'Select property type' }, { class: 'form-control', required: true } %>
+      </div>
+
+      <div class="form-group">
+        <%= property_form.label :listing_type %>
+        <%= property_form.select :listing_type, [
+          ['For Rent', 'rent'],
+          ['For Sale', 'sale']
+        ], { include_blank: 'Select listing type' }, { class: 'form-control', required: true } %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= property_form.label :bedrooms %>
+            <%= property_form.number_field :bedrooms, class: 'form-control', min: 0 %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= property_form.label :bathrooms %>
+            <%= property_form.number_field :bathrooms, class: 'form-control', min: 0, step: 0.5 %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= property_form.label :area %>
+            <div class="input-group">
+              <%= property_form.number_field :area, class: 'form-control', min: 0, step: 0.01 %>
+              <div class="input-group-append">
+                <%= property_form.select :area_unit, [['sqm', 'sqm'], ['sqft', 'sqft']], {}, { class: 'form-control' } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= property_form.label :address %>
+        <%= property_form.text_field :address, class: 'form-control', required: true %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= property_form.label :city %>
+            <%= property_form.text_field :city, class: 'form-control', required: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= property_form.label :state %>
+            <%= property_form.text_field :state, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= property_form.label :postal_code %>
+            <%= property_form.text_field :postal_code, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= property_form.label :country %>
+            <%= property_form.text_field :country, class: 'form-control', required: true %>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= property_form.check_box :furnished, class: 'form-check-input' %>
+        <%= property_form.label :furnished, class: 'form-check-label' %>
+      </div>
+
+      <div class="form-group">
+        <%= property_form.label :available_from %>
+        <%= property_form.date_field :available_from, class: 'form-control' %>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="restaurant-fields" class="listing-type-fields" style="display: none;">
+    <h4 class="mt-4">Restaurant Details</h4>
+    <hr>
+
+    <%= f.fields_for :listable, (@listing.listable || Komplex::Restaurant.new) do |restaurant_form| %>
+      <div class="form-group">
+        <%= restaurant_form.label :cuisine_type %>
+        <%= restaurant_form.text_field :cuisine_type, class: 'form-control', required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= restaurant_form.label :address %>
+        <%= restaurant_form.text_field :address, class: 'form-control', required: true %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= restaurant_form.label :city %>
+            <%= restaurant_form.text_field :city, class: 'form-control', required: true %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= restaurant_form.label :state %>
+            <%= restaurant_form.text_field :state, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= restaurant_form.label :postal_code %>
+            <%= restaurant_form.text_field :postal_code, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= restaurant_form.label :country %>
+            <%= restaurant_form.text_field :country, class: 'form-control', required: true %>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= restaurant_form.check_box :delivery_available, class: 'form-check-input' %>
+        <%= restaurant_form.label :delivery_available, class: 'form-check-label' %>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= restaurant_form.check_box :takeout_available, class: 'form-check-input' %>
+        <%= restaurant_form.label :takeout_available, class: 'form-check-label' %>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= restaurant_form.check_box :reservation_required, class: 'form-check-input' %>
+        <%= restaurant_form.label :reservation_required, class: 'form-check-label' %>
+      </div>
+
+      <div class="form-group">
+        <%= restaurant_form.label :menu_items, "Menu Items (JSON)" %>
+        <%= restaurant_form.text_area :menu_items, class: 'form-control', rows: 5 %>
+        <small class="form-text text-muted">Enter menu items in JSON format. Example: [{"name": "Pizza", "price": 10.99, "description": "Delicious pizza"}]</small>
+      </div>
+
+      <div class="form-group">
+        <%= restaurant_form.label :opening_hours, "Opening Hours (JSON)" %>
+        <%= restaurant_form.text_area :opening_hours, class: 'form-control', rows: 5 %>
+        <small class="form-text text-muted">Enter opening hours in JSON format. Example: {"monday": "9:00-17:00", "tuesday": "9:00-17:00"}</small>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="service-fields" class="listing-type-fields" style="display: none;">
+    <h4 class="mt-4">Service Details</h4>
+    <hr>
+
+    <%= f.fields_for :listable, (@listing.listable || Komplex::Service.new) do |service_form| %>
+      <div class="form-group">
+        <%= service_form.label :category_id %>
+        <%= service_form.collection_select :category_id, Komplex::Category.all, :id, :name, { include_blank: 'Select a category' }, { class: 'form-control', required: true } %>
+      </div>
+
+      <div class="form-group">
+        <%= service_form.label :pricing_model %>
+        <%= service_form.select :pricing_model, [
+          ['Hourly', 'hourly'],
+          ['Fixed', 'fixed'],
+          ['Per Session', 'per_session'],
+          ['Custom', 'custom']
+        ], { include_blank: 'Select pricing model' }, { class: 'form-control', required: true } %>
+      </div>
+
+      <div class="form-group">
+        <%= service_form.label :duration_minutes, "Duration (minutes)" %>
+        <%= service_form.number_field :duration_minutes, class: 'form-control', min: 0 %>
+      </div>
+
+      <div class="form-group">
+        <%= service_form.label :service_area %>
+        <%= service_form.text_area :service_area, class: 'form-control', rows: 3 %>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= service_form.check_box :remote_available, class: 'form-check-input' %>
+        <%= service_form.label :remote_available, class: 'form-check-label' %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="form-group mt-4">
+    <%= f.label :images %>
+    <%= f.file_field :images, multiple: true, class: 'form-control-file' %>
+    <small class="form-text text-muted">You can select multiple images. Recommended size: 1200x800 pixels.</small>
+  </div>
+
+  <div class="form-actions mt-4">
+    <%= f.submit class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', listings_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const listingTypeSelect = document.getElementById('listing-type-select');
+      const propertyFields = document.getElementById('property-fields');
+      const restaurantFields = document.getElementById('restaurant-fields');
+      const serviceFields = document.getElementById('service-fields');
+
+      function showRelevantFields() {
+        // Hide all fields first
+        propertyFields.style.display = 'none';
+        restaurantFields.style.display = 'none';
+        serviceFields.style.display = 'none';
+
+        // Show the relevant fields based on selection
+        switch(listingTypeSelect.value) {
+          case 'Komplex::Property':
+          case 'Komplex::RealEstateProperty':
+            propertyFields.style.display = 'block';
+            break;
+          case 'Komplex::Restaurant':
+            restaurantFields.style.display = 'block';
+            break;
+          case 'Komplex::Service':
+            serviceFields.style.display = 'block';
+            break;
+        }
+      }
+
+      // Initial setup
+      showRelevantFields();
+
+      // Listen for changes
+      listingTypeSelect.addEventListener('change', showRelevantFields);
+    });
+  </script>
+<% end %>

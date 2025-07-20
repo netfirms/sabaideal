@@ -1,0 +1,175 @@
+<%= form_with model: [:admin, property], url: property.new_record? ? spree.admin_real_estate_properties_path : spree.admin_real_estate_property_path(property), local: true, scope: :property do |f| %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :property_type %>
+        <%= f.select :property_type, 
+                    options_for_select(['Apartment', 'House', 'Condo', 'Villa', 'Land'], property.property_type), 
+                    { include_blank: 'Select Property Type' }, 
+                    class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :listing_type %>
+        <%= f.select :listing_type, 
+                    options_for_select(['Sale', 'Rent'], property.listing_type), 
+                    { include_blank: 'Select Listing Type' }, 
+                    class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <%= f.label :bedrooms %>
+        <%= f.number_field :bedrooms, class: 'form-control', min: 0 %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <%= f.label :bathrooms %>
+        <%= f.number_field :bathrooms, class: 'form-control', min: 0, step: 0.5 %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <%= f.label :area %>
+        <div class="input-group">
+          <%= f.number_field :area, class: 'form-control', min: 0 %>
+          <div class="input-group-append">
+            <%= f.select :area_unit, 
+                        options_for_select(['sqm', 'sqft'], property.area_unit), 
+                        {}, 
+                        class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :address %>
+    <%= f.text_field :address, class: 'form-control' %>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group">
+        <%= f.label :city %>
+        <%= f.text_field :city, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <%= f.label :state %>
+        <%= f.text_field :state, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <%= f.label :postal_code %>
+        <%= f.text_field :postal_code, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <%= f.label :country %>
+        <%= f.text_field :country, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :latitude %>
+        <%= f.text_field :latitude, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :longitude %>
+        <%= f.text_field :longitude, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :furnished %>
+        <%= f.check_box :furnished, class: 'form-check-input ml-2' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :available_from %>
+        <%= f.date_field :available_from, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="mt-4">Listing Details</h4>
+  <%= f.fields_for :listing do |listing_form| %>
+    <div class="form-group">
+      <%= listing_form.label :title %>
+      <%= listing_form.text_field :title, class: 'form-control' %>
+    </div>
+
+    <div class="form-group">
+      <%= listing_form.label :description %>
+      <%= listing_form.text_area :description, class: 'form-control', rows: 5 %>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= listing_form.label :price %>
+          <%= listing_form.number_field :price, class: 'form-control', min: 0, step: 0.01 %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= listing_form.label :merchant_id %>
+          <%= listing_form.collection_select :merchant_id, 
+                                            Spree::Merchant.all, 
+                                            :id, 
+                                            :name, 
+                                            { include_blank: 'Select Merchant' }, 
+                                            class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= listing_form.label :status %>
+          <%= listing_form.select :status, 
+                                options_for_select(['draft', 'pending', 'published', 'rejected'], listing_form.object.status), 
+                                { include_blank: 'Select Status' }, 
+                                class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= listing_form.label :featured %>
+      <%= listing_form.check_box :featured, class: 'form-check-input ml-2' %>
+    </div>
+  <% end %>
+
+  <div class="form-actions mt-4">
+    <%= f.submit class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', spree.admin_real_estate_properties_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>

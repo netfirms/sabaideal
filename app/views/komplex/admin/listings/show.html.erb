@@ -1,0 +1,108 @@
+<% content_for :page_title do %>
+  Listing Details
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to 'Back to Listings', spree.admin_listings_path, class: 'btn btn-primary' %>
+  <%= link_to 'Edit Listing', spree.edit_admin_listing_path(@listing), class: 'btn btn-secondary' %>
+
+  <% if @listing.status == 'pending' %>
+    <%= link_to 'Approve', spree.approve_admin_listing_path(@listing), method: :put, class: 'btn btn-success' %>
+    <%= link_to 'Reject', spree.reject_admin_listing_path(@listing), method: :put, class: 'btn btn-danger' %>
+  <% end %>
+
+  <%= link_to 'Delete', spree.admin_listing_path(@listing), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+<% end %>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">Listing: <%= @listing.title %></h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-8">
+        <dl class="row">
+          <dt class="col-sm-3">Title:</dt>
+          <dd class="col-sm-9"><%= @listing.title %></dd>
+
+          <dt class="col-sm-3">Description:</dt>
+          <dd class="col-sm-9"><%= @listing.description %></dd>
+
+          <dt class="col-sm-3">Price:</dt>
+          <dd class="col-sm-9"><%= number_to_currency(@listing.price) %></dd>
+
+          <dt class="col-sm-3">Merchant:</dt>
+          <dd class="col-sm-9"><%= link_to @listing.merchant.name, spree.admin_merchant_path(@listing.merchant) %></dd>
+
+          <dt class="col-sm-3">Status:</dt>
+          <dd class="col-sm-9">
+            <span class="badge <%= status_badge_class(@listing.status) %>">
+              <%= @listing.status.capitalize %>
+            </span>
+          </dd>
+
+          <dt class="col-sm-3">Featured:</dt>
+          <dd class="col-sm-9"><%= @listing.featured? ? 'Yes' : 'No' %></dd>
+
+          <dt class="col-sm-3">Created:</dt>
+          <dd class="col-sm-9"><%= @listing.created_at.strftime('%B %d, %Y at %I:%M %p') %></dd>
+
+          <dt class="col-sm-3">Updated:</dt>
+          <dd class="col-sm-9"><%= @listing.updated_at.strftime('%B %d, %Y at %I:%M %p') %></dd>
+
+          <% if @listing.published_at.present? %>
+            <dt class="col-sm-3">Published:</dt>
+            <dd class="col-sm-9"><%= @listing.published_at.strftime('%B %d, %Y at %I:%M %p') %></dd>
+          <% end %>
+        </dl>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h6 class="card-title">Listing Type Details</h6>
+          </div>
+          <div class="card-body">
+            <% if @listing.listable.present? %>
+              <% case @listing.listable_type %>
+              <% when 'Komplex::RealEstateProperty' %>
+                <%= render 'property_details', property: @listing.listable %>
+              <% when 'Komplex::Restaurant' %>
+                <%= render 'restaurant_details', restaurant: @listing.listable %>
+              <% when 'Komplex::Service' %>
+                <%= render 'service_details', service: @listing.listable %>
+              <% else %>
+                <p>No specific details available for this listing type.</p>
+              <% end %>
+            <% else %>
+              <p>No specific details available.</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <style>
+    .badge-draft { background-color: #6c757d; color: white; }
+    .badge-pending { background-color: #ffc107; color: black; }
+    .badge-published { background-color: #28a745; color: white; }
+    .badge-rejected { background-color: #dc3545; color: white; }
+  </style>
+<% end %>
+
+<% content_for :javascript do %>
+  <script>
+    function status_badge_class(status) {
+      switch(status) {
+        case 'draft': return 'badge-draft';
+        case 'pending': return 'badge-pending';
+        case 'published': return 'badge-published';
+        case 'rejected': return 'badge-rejected';
+        default: return 'badge-secondary';
+      }
+    }
+  </script>
+<% end %>

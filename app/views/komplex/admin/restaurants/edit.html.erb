@@ -1,0 +1,17 @@
+<% content_for :page_title do %>
+  Edit Restaurant
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to 'Back to Restaurants', spree.admin_restaurants_path, class: 'btn btn-primary' %>
+  <%= link_to 'View Restaurant', spree.admin_restaurant_path(@restaurant), class: 'btn btn-secondary' %>
+<% end %>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">Edit Restaurant</h5>
+  </div>
+  <div class="card-body">
+    <%= render 'form' %>
+  </div>
+</div>

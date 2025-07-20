@@ -1,0 +1,51 @@
+<dl class="row">
+  <dt class="col-sm-4">Cuisine Type:</dt>
+  <dd class="col-sm-8"><%= restaurant.cuisine_type %></dd>
+
+  <dt class="col-sm-4">Address:</dt>
+  <dd class="col-sm-8"><%= restaurant.address %></dd>
+
+  <% if restaurant.menu_items.present? %>
+    <dt class="col-sm-4">Menu Items:</dt>
+    <dd class="col-sm-8">
+      <ul class="list-unstyled">
+        <% begin %>
+          <% menu = restaurant.menu_items.is_a?(Hash) || restaurant.menu_items.is_a?(Array) ? restaurant.menu_items : JSON.parse(restaurant.menu_items) %>
+          <% if menu.respond_to?(:each) && menu.any? %>
+            <% menu.each do |item| %>
+              <% if item.is_a?(Hash) %>
+                <li><%= item['name'] %> - <%= number_to_currency(item['price']) %></li>
+              <% else %>
+                <li><%= item %></li>
+              <% end %>
+            <% end %>
+          <% else %>
+            <li><%= restaurant.menu_items %></li>
+          <% end %>
+        <% rescue JSON::ParserError %>
+          <li><%= restaurant.menu_items %></li>
+        <% end %>
+      </ul>
+    </dd>
+  <% end %>
+
+  <% if restaurant.opening_hours.present? %>
+    <dt class="col-sm-4">Opening Hours:</dt>
+    <dd class="col-sm-8">
+      <ul class="list-unstyled">
+        <% begin %>
+          <% hours = restaurant.opening_hours.is_a?(Hash) ? restaurant.opening_hours : JSON.parse(restaurant.opening_hours) %>
+          <% if hours.respond_to?(:each) && hours.any? %>
+            <% hours.each do |day, time| %>
+              <li><strong><%= day.capitalize %>:</strong> <%= time %></li>
+            <% end %>
+          <% else %>
+            <li><%= restaurant.opening_hours %></li>
+          <% end %>
+        <% rescue JSON::ParserError %>
+          <li><%= restaurant.opening_hours %></li>
+        <% end %>
+      </ul>
+    </dd>
+  <% end %>
+</dl>

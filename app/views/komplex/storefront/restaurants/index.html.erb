@@ -1,0 +1,80 @@
+<% content_for :title do %>
+  Restaurants
+<% end %>
+
+<div class="container my-5">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1>Restaurants</h1>
+    </div>
+    <div class="col-md-4 text-end">
+      <% if current_merchant %>
+        <%= link_to 'Add New Restaurant', new_restaurant_path, class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <%= form_with(url: restaurants_path, method: :get, local: true, class: 'row g-3') do |f| %>
+        <div class="col-md-4">
+          <%= f.text_field :search, value: params[:search], placeholder: 'Search restaurants...', class: 'form-control' %>
+        </div>
+        <div class="col-md-3">
+          <%= f.select :cuisine_type, 
+                      [['All Cuisines', ''], 'Italian', 'Chinese', 'Mexican', 'Japanese', 'Indian', 'Thai', 'French', 'American', 'Other'], 
+                      { selected: params[:cuisine_type] }, 
+                      { class: 'form-select' } %>
+        </div>
+        <div class="col-md-3">
+          <%= f.select :sort, 
+                      [['Newest', 'newest'], ['Price: Low to High', 'price_asc'], ['Price: High to Low', 'price_desc']], 
+                      { selected: params[:sort] }, 
+                      { class: 'form-select' } %>
+        </div>
+        <div class="col-md-2">
+          <%= f.submit 'Filter', class: 'btn btn-secondary w-100' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @restaurants.any? %>
+    <div class="row">
+      <% @restaurants.each do |restaurant| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= link_to restaurant.listing.title, restaurant_path(restaurant) %></h5>
+              <p class="card-text text-muted"><%= restaurant.cuisine_type %></p>
+              <p class="card-text"><%= truncate(restaurant.listing.description, length: 100) %></p>
+              <p class="card-text">
+                <% if restaurant.delivery_available %>
+                  <span class="badge bg-success me-1">Delivery</span>
+                <% end %>
+                <% if restaurant.takeout_available %>
+                  <span class="badge bg-info me-1">Takeout</span>
+                <% end %>
+                <% if restaurant.reservation_required %>
+                  <span class="badge bg-warning">Reservation Required</span>
+                <% end %>
+              </p>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+              <span class="text-muted"><%= restaurant.city %></span>
+              <span class="fw-bold"><%= number_to_currency(restaurant.listing.price) %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @restaurants %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      No restaurants found matching your criteria.
+    </div>
+  <% end %>
+</div>

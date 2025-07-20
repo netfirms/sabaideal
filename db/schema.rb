@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_02_154146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -89,23 +89,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
 
   create_table "komplex_advertisements", force: :cascade do |t|
     t.string "title", null: false
-    t.text "description"
+    t.text "description", null: false
     t.string "placement", null: false
     t.string "ad_type", null: false
-    t.bigint "vendor_id", null: false
+    t.bigint "merchant_id", null: false
     t.bigint "listing_id"
     t.datetime "starts_at", null: false
     t.datetime "ends_at", null: false
-    t.decimal "cost", precision: 10, scale: 2, null: false
-    t.string "status", default: "pending"
+    t.decimal "cost", precision: 10, scale: 2, default: "0.0", null: false
+    t.string "status", default: "pending", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["ad_type"], name: "index_komplex_advertisements_on_ad_type"
     t.index ["listing_id"], name: "index_komplex_advertisements_on_listing_id"
-    t.index ["placement"], name: "index_komplex_advertisements_on_placement"
-    t.index ["starts_at", "ends_at"], name: "index_komplex_advertisements_on_date_range"
-    t.index ["status"], name: "index_komplex_advertisements_on_status"
-    t.index ["vendor_id"], name: "index_komplex_advertisements_on_vendor_id"
+    t.index ["merchant_id"], name: "index_komplex_advertisements_on_merchant_id"
   end
 
   create_table "komplex_categories", force: :cascade do |t|
@@ -120,178 +116,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
     t.index ["parent_id"], name: "index_komplex_categories_on_parent_id"
   end
 
-  create_table "komplex_commissions", force: :cascade do |t|
-    t.bigint "vendor_id", null: false
-    t.bigint "order_id", null: false
-    t.bigint "line_item_id"
-    t.decimal "vendor_amount", precision: 10, scale: 2, null: false
-    t.decimal "commission_amount", precision: 10, scale: 2, null: false
-    t.string "status", default: "pending"
-    t.datetime "paid_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["line_item_id"], name: "index_komplex_commissions_on_line_item_id"
-    t.index ["order_id"], name: "index_komplex_commissions_on_order_id"
-    t.index ["status"], name: "index_komplex_commissions_on_status"
-    t.index ["vendor_id"], name: "index_komplex_commissions_on_vendor_id"
-  end
-
-  create_table "komplex_conversations", force: :cascade do |t|
-    t.bigint "listing_id", null: false
-    t.bigint "buyer_id", null: false
-    t.bigint "vendor_id", null: false
-    t.string "status", default: "active"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["buyer_id"], name: "index_komplex_conversations_on_buyer_id"
-    t.index ["listing_id"], name: "index_komplex_conversations_on_listing_id"
-    t.index ["status"], name: "index_komplex_conversations_on_status"
-    t.index ["vendor_id"], name: "index_komplex_conversations_on_vendor_id"
-  end
-
   create_table "komplex_listings", force: :cascade do |t|
     t.string "title", null: false
-    t.text "description"
-    t.decimal "price", precision: 10, scale: 2
-    t.bigint "vendor_id", null: false
-    t.string "listable_type", null: false
-    t.bigint "listable_id", null: false
-    t.string "status", default: "draft", null: false
+    t.text "description", null: false
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.bigint "merchant_id", null: false
+    t.string "status", default: "pending", null: false
+    t.string "condition", null: false
+    t.string "category", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "listable_type"
+    t.bigint "listable_id"
     t.boolean "featured", default: false
     t.datetime "published_at"
-    t.text "rejection_reason"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.index ["featured"], name: "index_komplex_listings_on_featured"
     t.index ["listable_type", "listable_id"], name: "index_komplex_listings_on_listable"
-    t.index ["status"], name: "index_komplex_listings_on_status"
-    t.index ["vendor_id"], name: "index_komplex_listings_on_vendor_id"
+    t.index ["merchant_id"], name: "index_komplex_listings_on_merchant_id"
   end
 
-  create_table "komplex_messages", force: :cascade do |t|
-    t.bigint "conversation_id", null: false
-    t.bigint "sender_id", null: false
-    t.text "content", null: false
-    t.boolean "read", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["conversation_id"], name: "index_komplex_messages_on_conversation_id"
-    t.index ["sender_id"], name: "index_komplex_messages_on_sender_id"
-  end
-
-  create_table "komplex_payouts", force: :cascade do |t|
-    t.bigint "vendor_id", null: false
-    t.decimal "amount", precision: 10, scale: 2, null: false
-    t.string "status", default: "pending"
-    t.string "transaction_id"
-    t.text "notes"
-    t.datetime "processed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["status"], name: "index_komplex_payouts_on_status"
-    t.index ["vendor_id"], name: "index_komplex_payouts_on_vendor_id"
-  end
-
-  create_table "komplex_promotions", force: :cascade do |t|
-    t.string "title", null: false
-    t.text "description"
-    t.string "promotion_type", null: false
-    t.decimal "discount_amount", precision: 10, scale: 2, null: false
-    t.datetime "starts_at", null: false
-    t.datetime "ends_at", null: false
-    t.bigint "vendor_id"
-    t.bigint "listing_id"
-    t.string "code"
-    t.integer "usage_limit"
-    t.integer "usage_count", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_komplex_promotions_on_code", unique: true
-    t.index ["listing_id"], name: "index_komplex_promotions_on_listing_id"
-    t.index ["starts_at", "ends_at"], name: "index_komplex_promotions_on_date_range"
-    t.index ["vendor_id"], name: "index_komplex_promotions_on_vendor_id"
-  end
-
-  create_table "komplex_properties", force: :cascade do |t|
-    t.bigint "listing_id", null: false
-    t.string "property_type", null: false
-    t.string "listing_type", null: false
-    t.integer "bedrooms"
-    t.integer "bathrooms"
-    t.decimal "area", precision: 10, scale: 2
-    t.string "area_unit", default: "sqm"
-    t.string "address", null: false
-    t.string "city", null: false
-    t.string "state"
-    t.string "postal_code"
-    t.string "country", null: false
-    t.decimal "latitude", precision: 10, scale: 6
-    t.decimal "longitude", precision: 10, scale: 6
-    t.boolean "furnished", default: false
-    t.date "available_from"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["bathrooms"], name: "index_komplex_properties_on_bathrooms"
-    t.index ["bedrooms"], name: "index_komplex_properties_on_bedrooms"
-    t.index ["city"], name: "index_komplex_properties_on_city"
-    t.index ["latitude", "longitude"], name: "index_komplex_properties_on_coordinates"
-    t.index ["listing_id"], name: "index_komplex_properties_on_listing_id"
-    t.index ["listing_type"], name: "index_komplex_properties_on_listing_type"
-    t.index ["property_type"], name: "index_komplex_properties_on_property_type"
-  end
-
-  create_table "komplex_restaurants", force: :cascade do |t|
-    t.bigint "listing_id", null: false
-    t.string "cuisine_type"
-    t.jsonb "menu_items", default: []
-    t.jsonb "opening_hours", default: {}
-    t.string "address", null: false
-    t.string "city", null: false
-    t.string "state"
-    t.string "postal_code"
-    t.string "country", null: false
-    t.decimal "latitude", precision: 10, scale: 6
-    t.decimal "longitude", precision: 10, scale: 6
-    t.boolean "delivery_available", default: false
-    t.boolean "takeout_available", default: false
-    t.boolean "reservation_required", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["city"], name: "index_komplex_restaurants_on_city"
-    t.index ["cuisine_type"], name: "index_komplex_restaurants_on_cuisine_type"
-    t.index ["latitude", "longitude"], name: "index_komplex_restaurants_on_coordinates"
-    t.index ["listing_id"], name: "index_komplex_restaurants_on_listing_id"
-  end
-
-  create_table "komplex_reviews", force: :cascade do |t|
-    t.bigint "listing_id", null: false
-    t.bigint "user_id", null: false
-    t.integer "rating", null: false
-    t.text "comment"
-    t.boolean "approved", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["approved"], name: "index_komplex_reviews_on_approved"
-    t.index ["listing_id"], name: "index_komplex_reviews_on_listing_id"
-    t.index ["user_id"], name: "index_komplex_reviews_on_user_id"
-  end
-
-  create_table "komplex_services", force: :cascade do |t|
-    t.bigint "listing_id", null: false
-    t.bigint "category_id", null: false
-    t.string "pricing_model", null: false
-    t.decimal "price", precision: 10, scale: 2
-    t.integer "duration_minutes"
-    t.text "service_area"
-    t.boolean "remote_available", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["category_id"], name: "index_komplex_services_on_category_id"
-    t.index ["listing_id"], name: "index_komplex_services_on_listing_id"
-    t.index ["pricing_model"], name: "index_komplex_services_on_pricing_model"
-  end
-
-  create_table "komplex_vendors", force: :cascade do |t|
+  create_table "komplex_merchants", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "name", null: false
     t.text "description"
@@ -300,8 +144,60 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
     t.jsonb "settings", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["status"], name: "index_komplex_vendors_on_status"
-    t.index ["user_id"], name: "index_komplex_vendors_on_user_id"
+    t.index ["status"], name: "index_komplex_merchants_on_status"
+    t.index ["user_id"], name: "index_komplex_merchants_on_user_id"
+  end
+
+  create_table "komplex_properties", force: :cascade do |t|
+    t.string "property_type", null: false
+    t.string "listing_type"
+    t.integer "bedrooms"
+    t.integer "bathrooms"
+    t.decimal "area"
+    t.string "area_unit"
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "city"
+    t.string "state"
+    t.string "postal_code"
+    t.string "country"
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
+    t.boolean "furnished", default: false
+    t.date "available_from"
+    t.bigint "property_id"
+    t.index ["property_id"], name: "index_komplex_properties_on_property_id"
+  end
+
+  create_table "komplex_restaurants", force: :cascade do |t|
+    t.string "cuisine_type"
+    t.text "menu_items"
+    t.string "opening_hours"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "postal_code"
+    t.string "country"
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
+    t.boolean "delivery_available", default: false
+    t.boolean "takeout_available", default: false
+    t.boolean "reservation_required", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "komplex_services", force: :cascade do |t|
+    t.bigint "category_id"
+    t.string "pricing_model"
+    t.decimal "price", precision: 10, scale: 2
+    t.integer "duration_minutes"
+    t.string "service_area"
+    t.boolean "remote_available", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_komplex_services_on_category_id"
   end
 
   create_table "spree_addresses", force: :cascade do |t|
@@ -1772,12 +1668,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
     t.text "storefront_custom_code_head"
     t.text "storefront_custom_code_body_start"
     t.text "storefront_custom_code_body_end"
-    t.bigint "vendor_id"
     t.index ["code"], name: "index_spree_stores_on_code", unique: true
     t.index ["default"], name: "index_spree_stores_on_default"
     t.index ["deleted_at"], name: "index_spree_stores_on_deleted_at"
     t.index ["url"], name: "index_spree_stores_on_url"
-    t.index ["vendor_id"], name: "index_spree_stores_on_vendor_id"
   end
 
   create_table "spree_stripe_payment_intents", force: :cascade do |t|
@@ -2135,27 +2029,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "komplex_advertisements", "komplex_listings", column: "listing_id"
-  add_foreign_key "komplex_advertisements", "komplex_vendors", column: "vendor_id"
+  add_foreign_key "komplex_advertisements", "komplex_merchants", column: "merchant_id"
   add_foreign_key "komplex_categories", "komplex_categories", column: "parent_id"
-  add_foreign_key "komplex_commissions", "komplex_vendors", column: "vendor_id"
-  add_foreign_key "komplex_commissions", "spree_line_items", column: "line_item_id"
-  add_foreign_key "komplex_commissions", "spree_orders", column: "order_id"
-  add_foreign_key "komplex_conversations", "komplex_listings", column: "listing_id"
-  add_foreign_key "komplex_conversations", "komplex_vendors", column: "vendor_id"
-  add_foreign_key "komplex_conversations", "spree_users", column: "buyer_id"
-  add_foreign_key "komplex_listings", "komplex_vendors", column: "vendor_id"
-  add_foreign_key "komplex_messages", "komplex_conversations", column: "conversation_id"
-  add_foreign_key "komplex_messages", "spree_users", column: "sender_id"
-  add_foreign_key "komplex_payouts", "komplex_vendors", column: "vendor_id"
-  add_foreign_key "komplex_promotions", "komplex_listings", column: "listing_id"
-  add_foreign_key "komplex_promotions", "komplex_vendors", column: "vendor_id"
-  add_foreign_key "komplex_properties", "komplex_listings", column: "listing_id"
-  add_foreign_key "komplex_restaurants", "komplex_listings", column: "listing_id"
-  add_foreign_key "komplex_reviews", "komplex_listings", column: "listing_id"
-  add_foreign_key "komplex_reviews", "spree_users", column: "user_id"
+  add_foreign_key "komplex_listings", "komplex_merchants", column: "merchant_id"
+  add_foreign_key "komplex_merchants", "spree_users", column: "user_id"
+  add_foreign_key "komplex_properties", "spree_properties", column: "property_id"
   add_foreign_key "komplex_services", "komplex_categories", column: "category_id"
-  add_foreign_key "komplex_services", "komplex_listings", column: "listing_id"
-  add_foreign_key "komplex_vendors", "spree_users", column: "user_id"
   add_foreign_key "spree_oauth_access_grants", "spree_oauth_applications", column: "application_id"
   add_foreign_key "spree_oauth_access_tokens", "spree_oauth_applications", column: "application_id"
   add_foreign_key "spree_option_type_translations", "spree_option_types"
@@ -2166,7 +2045,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_13_101861) do
   add_foreign_key "spree_product_translations", "spree_products"
   add_foreign_key "spree_property_translations", "spree_properties"
   add_foreign_key "spree_store_translations", "spree_stores"
-  add_foreign_key "spree_stores", "komplex_vendors", column: "vendor_id"
   add_foreign_key "spree_taxon_translations", "spree_taxons"
   add_foreign_key "spree_taxonomy_translations", "spree_taxonomies"
 end

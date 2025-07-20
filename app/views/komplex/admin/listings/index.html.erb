@@ -1,0 +1,51 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.listings.index.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.listings.new.title'), spree.new_admin_listing_path, class: 'btn btn-primary' %>
+<% end %>
+
+<% if @listings.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t('komplex.listings.title') %></th>
+          <th><%= Spree.t('komplex.listings.price') %></th>
+          <th><%= Spree.t('komplex.listings.merchant') %></th>
+          <th><%= Spree.t('komplex.listings.status') %></th>
+          <th><%= Spree.t('komplex.listings.featured') %></th>
+          <th><%= Spree.t('komplex.listings.created_at') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @listings.each do |listing| %>
+          <tr>
+            <td><%= link_to listing.title, spree.admin_listing_path(listing) %></td>
+            <td><%= number_to_currency(listing.price) %></td>
+            <td><%= listing.merchant.name if listing.merchant %></td>
+            <td><span class="badge <%= listing.status == 'published' ? 'badge-success' : (listing.status == 'rejected' ? 'badge-danger' : 'badge-warning') %>"><%= listing.status %></span></td>
+            <td><%= listing.featured? ? Spree.t('yes') : Spree.t('no') %></td>
+            <td><%= l listing.created_at.to_date %></td>
+            <td class="actions">
+              <% if listing.status == 'pending' %>
+                <%= link_to_with_icon 'check', Spree.t('komplex.listings.approve'), spree.approve_admin_listing_path(listing), method: :put, class: 'btn btn-success btn-sm', data: { confirm: Spree.t('komplex.listings.confirm_approve') } %>
+                <%= link_to_with_icon 'times', Spree.t('komplex.listings.reject'), spree.reject_admin_listing_path(listing), method: :put, class: 'btn btn-danger btn-sm', data: { confirm: Spree.t('komplex.listings.confirm_reject') } %>
+              <% end %>
+              <%= link_to_edit listing, no_text: true, class: 'btn btn-primary btn-sm' %>
+              <%= link_to_delete listing, no_text: true, class: 'btn btn-danger btn-sm' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('komplex.listings.no_listings_found') %>
+  </div>
+<% end %>
+
+<%= paginate @listings %>

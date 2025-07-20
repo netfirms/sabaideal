@@ -1,0 +1,49 @@
+<% content_for :page_title do %>
+  <%= Spree.t('komplex.merchants.index.title') %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to Spree.t('komplex.merchants.new.title'), spree.new_admin_merchant_path, class: 'btn btn-primary' %>
+<% end %>
+
+<% if @merchants.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t('komplex.merchants.name') %></th>
+          <th><%= Spree.t('komplex.merchants.user') %></th>
+          <th><%= Spree.t('komplex.merchants.status') %></th>
+          <th><%= Spree.t('komplex.merchants.commission_rate') %></th>
+          <th><%= Spree.t('komplex.merchants.created_at') %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @merchants.each do |merchant| %>
+          <tr>
+            <td><%= link_to merchant.name, spree.admin_merchant_path(merchant) %></td>
+            <td><%= merchant.user.email if merchant.user %></td>
+            <td><span class="badge <%= merchant.status == 'approved' ? 'badge-success' : (merchant.status == 'rejected' ? 'badge-danger' : 'badge-warning') %>"><%= merchant.status %></span></td>
+            <td><%= number_to_percentage(merchant.commission_rate * 100, precision: 2) %></td>
+            <td><%= l merchant.created_at.to_date %></td>
+            <td class="actions">
+              <% if merchant.status == 'pending' %>
+                <%= link_to_with_icon 'check', Spree.t('komplex.merchants.approve'), spree.approve_admin_merchant_path(merchant), method: :put, class: 'btn btn-success btn-sm', data: { confirm: Spree.t('komplex.merchants.confirm_approve') } %>
+                <%= link_to_with_icon 'times', Spree.t('komplex.merchants.reject'), spree.reject_admin_merchant_path(merchant), method: :put, class: 'btn btn-danger btn-sm', data: { confirm: Spree.t('komplex.merchants.confirm_reject') } %>
+              <% end %>
+              <%= link_to_edit merchant, no_text: true, class: 'btn btn-primary btn-sm' %>
+              <%= link_to_delete merchant, no_text: true, class: 'btn btn-danger btn-sm' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t('komplex.merchants.no_merchants_found') %>
+  </div>
+<% end %>
+
+<%= paginate @merchants %>

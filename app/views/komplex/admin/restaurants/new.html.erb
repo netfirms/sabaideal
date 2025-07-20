@@ -1,0 +1,16 @@
+<% content_for :page_title do %>
+  New Restaurant
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to 'Back to Restaurants', spree.admin_restaurants_path, class: 'btn btn-primary' %>
+<% end %>
+
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">New Restaurant</h5>
+  </div>
+  <div class="card-body">
+    <%= render 'form' %>
+  </div>
+</div>

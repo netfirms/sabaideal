@@ -1,0 +1,75 @@
+<%= form_with(model: @merchant, local: true) do |f| %>
+  <div class="form-group">
+    <%= f.label :name, "Business Name" %>
+    <%= f.text_field :name, class: 'form-control', required: true %>
+    <small class="form-text text-muted">Enter the name of your business as it should appear to customers.</small>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "Business Description" %>
+    <%= f.text_area :description, class: 'form-control', rows: 5, required: true %>
+    <small class="form-text text-muted">Describe your business, what you offer, and why customers should choose you.</small>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :logo, "Business Logo" %>
+    <%= f.file_field :logo, class: 'form-control-file' %>
+    <small class="form-text text-muted">Upload a logo for your business. Recommended size: 400x400 pixels.</small>
+  </div>
+
+  <% if @merchant.new_record? %>
+    <div class="alert alert-info">
+      <h5><i class="fas fa-info-circle"></i> Important Information</h5>
+      <p>By registering as a merchant, you agree to our marketplace terms and conditions. Your merchant account will be reviewed by our team before you can start listing items.</p>
+      <p>The review process typically takes 1-2 business days.</p>
+    </div>
+
+    <div class="form-check mb-4">
+      <%= check_box_tag :terms_accepted, '1', false, class: 'form-check-input', required: true %>
+      <label class="form-check-label" for="terms_accepted">
+        I agree to the <a href="#" data-toggle="modal" data-target="#termsModal">Terms and Conditions</a> for merchants
+      </label>
+    </div>
+  <% end %>
+
+  <div class="form-actions">
+    <%= f.submit @merchant.new_record? ? "Register as Merchant" : "Update Merchant Profile", class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', @merchant.new_record? ? listings_path : merchant_path(@merchant), class: 'btn btn-secondary' %>
+  </div>
+<% end %>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="termsModalLabel">Merchant Terms and Conditions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5>1. Merchant Registration</h5>
+        <p>By registering as a merchant on our marketplace, you agree to provide accurate and complete information about your business. You are responsible for maintaining the confidentiality of your account credentials.</p>
+        
+        <h5>2. Listing Requirements</h5>
+        <p>All listings must comply with our marketplace guidelines. We reserve the right to reject or remove any listing that violates these guidelines or applicable laws.</p>
+        
+        <h5>3. Commission and Fees</h5>
+        <p>A commission fee will be charged on each successful transaction. The current commission rate is displayed in your merchant dashboard.</p>
+        
+        <h5>4. Payouts</h5>
+        <p>Payouts are processed according to the schedule specified in your merchant dashboard. You are responsible for providing accurate banking information for payouts.</p>
+        
+        <h5>5. Customer Service</h5>
+        <p>Merchants are expected to provide excellent customer service and respond to customer inquiries in a timely manner.</p>
+        
+        <h5>6. Termination</h5>
+        <p>We reserve the right to terminate merchant accounts that violate our terms and conditions or engage in fraudulent activities.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">I Understand</button>
+      </div>
+    </div>
+  </div>
+</div>
